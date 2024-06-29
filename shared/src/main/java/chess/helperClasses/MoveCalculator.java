@@ -51,8 +51,29 @@ public class MoveCalculator {
 
     private Collection<ChessMove> calculateKing() {
         Collection<ChessMove> moveCollection = new LinkedList<ChessMove>();
-        if (pieceAtLocation(positionRow + 1,positionCol) != teamColor && !isOffBoard(positionRow,positionCol)) {
-            moveCollection.add(new ChessMove())
+        if (isOnBoard(positionRow + 1,positionCol) && pieceAtLocation(positionRow + 1,positionCol) != teamColor) {
+            moveCollection.add(new ChessMove(myPosition,new ChessPosition(positionRow + 1,positionCol)));
+        }
+        if (isOnBoard(positionRow - 1,positionCol) && pieceAtLocation(positionRow - 1,positionCol) != teamColor) {
+            moveCollection.add(new ChessMove(myPosition,new ChessPosition(positionRow - 1,positionCol)));
+        }
+        if (isOnBoard(positionRow,positionCol + 1) && pieceAtLocation(positionRow,positionCol + 1) != teamColor) {
+            moveCollection.add(new ChessMove(myPosition,new ChessPosition(positionRow,positionCol + 1)));
+        }
+        if (isOnBoard(positionRow,positionCol - 1) && pieceAtLocation(positionRow,positionCol - 1) != teamColor) {
+            moveCollection.add(new ChessMove(myPosition,new ChessPosition(positionRow,positionCol - 1)));
+        }
+        if (isOnBoard(positionRow + 1,positionCol + 1) && pieceAtLocation(positionRow + 1,positionCol + 1) != teamColor) {
+            moveCollection.add(new ChessMove(myPosition,new ChessPosition(positionRow + 1,positionCol + 1)));
+        }
+        if (isOnBoard(positionRow - 1,positionCol - 1) && pieceAtLocation(positionRow - 1,positionCol - 1) != teamColor) {
+            moveCollection.add(new ChessMove(myPosition,new ChessPosition(positionRow - 1,positionCol - 1)));
+        }
+        if (isOnBoard(positionRow + 1,positionCol - 1) && pieceAtLocation(positionRow + 1,positionCol - 1) != teamColor) {
+            moveCollection.add(new ChessMove(myPosition,new ChessPosition(positionRow + 1,positionCol - 1)));
+        }
+        if (isOnBoard(positionRow - 1,positionCol + 1) && pieceAtLocation(positionRow - 1,positionCol + 1) != teamColor) {
+            moveCollection.add(new ChessMove(myPosition,new ChessPosition(positionRow - 1,positionCol + 1)));
         }
 
         return moveCollection;
@@ -83,20 +104,20 @@ public class MoveCalculator {
         return moveCollection;
     }
 
-    private boolean isOffBoard(int row, int col) {
-        if (row >= 8 || row < 0) {
-            return true;
-        } else return col >= 8 || col < 0;
+    private boolean isOnBoard(int row, int col) {
+        if (row > 8 || row < 1) {
+            return false;
+        } else return !(col > 8 || col < 1);
     }
 
     private Options pieceAtLocation(int row, int col) {
         ChessPosition location = new ChessPosition(row, col);
-        if (board.getPiece(location).getTeamColor() == ChessGame.TeamColor.WHITE) {
-            return Options.WHITE;
-        } else if (board.getPiece(location).getTeamColor() == ChessGame.TeamColor.BLACK) {
-            return Options.BLACK;
-        } else {
+        if (board.getPiece(location) == null) {
             return Options.EMPTY;
+        } else if (board.getPiece(location).getTeamColor() == ChessGame.TeamColor.WHITE) {
+            return Options.WHITE;
+        } else {
+            return Options.BLACK;
         }
     }
 }
