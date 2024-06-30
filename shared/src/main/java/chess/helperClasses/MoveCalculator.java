@@ -38,13 +38,13 @@ public class MoveCalculator {
         Collection<ChessMove> moveCollection;
         // calculate move set based on piece type
         switch (pieceType) {
-            case KING -> { moveCollection = calculateKing(); }
-            case QUEEN -> { moveCollection = calculateQueen(); }
-            case BISHOP -> { moveCollection = calculateBishop(); }
-            case KNIGHT -> { moveCollection = calculateKnight(); }
-            case ROOK -> { moveCollection = calculateRook(); }
-            case PAWN -> { moveCollection = calculatePawn(); }
-            default -> { moveCollection = new LinkedList<ChessMove>(); }
+            case KING -> moveCollection = calculateKing();
+            case QUEEN -> moveCollection = calculateQueen();
+            case BISHOP -> moveCollection = calculateBishop();
+            case KNIGHT -> moveCollection = calculateKnight();
+            case ROOK -> moveCollection = calculateRook();
+            case PAWN -> moveCollection = calculatePawn();
+            default -> moveCollection = new LinkedList<ChessMove>();
         }
         return moveCollection;
     }
@@ -88,7 +88,8 @@ public class MoveCalculator {
     }
 
     private Collection<ChessMove> calculateQueen() {
-        Collection<ChessMove> moveCollection = new LinkedList<ChessMove>();
+        Collection<ChessMove> moveCollection = calculateBishop();
+        moveCollection.addAll(calculateRook());
         return moveCollection;
     }
 
@@ -144,6 +145,38 @@ public class MoveCalculator {
 
     private Collection<ChessMove> calculateKnight() {
         Collection<ChessMove> moveCollection = new LinkedList<ChessMove>();
+        // check up left
+        if (isOnBoard(positionRow + 2,positionCol - 1) && pieceAtLocation(positionRow + 2,positionCol - 1) != teamColor) {
+            moveCollection.add(new ChessMove(myPosition,new ChessPosition(positionRow + 2,positionCol - 1)));
+        }
+        // check up right
+        if (isOnBoard(positionRow + 2,positionCol + 1) && pieceAtLocation(positionRow + 2,positionCol + 1) != teamColor) {
+            moveCollection.add(new ChessMove(myPosition,new ChessPosition(positionRow + 2,positionCol + 1)));
+        }
+        // check down left
+        if (isOnBoard(positionRow - 2,positionCol - 1) && pieceAtLocation(positionRow - 2,positionCol - 1) != teamColor) {
+            moveCollection.add(new ChessMove(myPosition,new ChessPosition(positionRow - 2,positionCol - 1)));
+        }
+        // check down right
+        if (isOnBoard(positionRow - 2,positionCol + 1) && pieceAtLocation(positionRow - 2,positionCol + 1) != teamColor) {
+            moveCollection.add(new ChessMove(myPosition,new ChessPosition(positionRow - 2,positionCol + 1)));
+        }
+        // check right up
+        if (isOnBoard(positionRow + 1,positionCol + 2) && pieceAtLocation(positionRow + 1,positionCol + 2) != teamColor) {
+            moveCollection.add(new ChessMove(myPosition,new ChessPosition(positionRow + 1,positionCol + 2)));
+        }
+        // check right down
+        if (isOnBoard(positionRow - 1,positionCol + 2) && pieceAtLocation(positionRow - 1,positionCol + 2) != teamColor) {
+            moveCollection.add(new ChessMove(myPosition,new ChessPosition(positionRow - 1,positionCol + 2)));
+        }
+        // check left up
+        if (isOnBoard(positionRow + 1,positionCol - 2) && pieceAtLocation(positionRow + 1,positionCol - 2) != teamColor) {
+            moveCollection.add(new ChessMove(myPosition,new ChessPosition(positionRow + 1,positionCol - 2)));
+        }
+        // check right down
+        if (isOnBoard(positionRow - 1,positionCol - 2) && pieceAtLocation(positionRow - 1,positionCol - 2) != teamColor) {
+            moveCollection.add(new ChessMove(myPosition,new ChessPosition(positionRow - 1,positionCol - 2)));
+        }
         return moveCollection;
     }
 
@@ -198,6 +231,85 @@ public class MoveCalculator {
 
     private Collection<ChessMove> calculatePawn() {
         Collection<ChessMove> moveCollection = new LinkedList<ChessMove>();
+        // if white
+        if (teamColor == Options.WHITE) {
+            // check above
+            if (pieceAtLocation(positionRow + 1, positionCol) == Options.EMPTY) {
+                if ((positionRow + 1) == 8) {
+                    moveCollection.add(new ChessMove(myPosition, new ChessPosition(positionRow + 1, positionCol), ChessPiece.PieceType.QUEEN));
+                    moveCollection.add(new ChessMove(myPosition, new ChessPosition(positionRow + 1, positionCol), ChessPiece.PieceType.BISHOP));
+                    moveCollection.add(new ChessMove(myPosition, new ChessPosition(positionRow + 1, positionCol), ChessPiece.PieceType.KNIGHT));
+                    moveCollection.add(new ChessMove(myPosition, new ChessPosition(positionRow + 1, positionCol), ChessPiece.PieceType.ROOK));
+                } else {
+                    moveCollection.add(new ChessMove(myPosition, new ChessPosition(positionRow + 1, positionCol)));
+                }
+            }
+            // check right kill
+            if (isOnBoard(positionRow + 1, positionCol + 1) && pieceAtLocation(positionRow + 1, positionCol + 1) == Options.BLACK) {
+                if ((positionRow + 1) == 8) {
+                    moveCollection.add(new ChessMove(myPosition, new ChessPosition(positionRow + 1, positionCol + 1), ChessPiece.PieceType.QUEEN));
+                    moveCollection.add(new ChessMove(myPosition, new ChessPosition(positionRow + 1, positionCol + 1), ChessPiece.PieceType.BISHOP));
+                    moveCollection.add(new ChessMove(myPosition, new ChessPosition(positionRow + 1, positionCol + 1), ChessPiece.PieceType.KNIGHT));
+                    moveCollection.add(new ChessMove(myPosition, new ChessPosition(positionRow + 1, positionCol + 1), ChessPiece.PieceType.ROOK));
+                } else {
+                    moveCollection.add(new ChessMove(myPosition, new ChessPosition(positionRow + 1, positionCol + 1)));
+                }
+            }
+            // check left kill
+            if (isOnBoard(positionRow + 1, positionCol - 1) && pieceAtLocation(positionRow + 1, positionCol - 1) == Options.BLACK) {
+                if ((positionRow + 1) == 8) {
+                    moveCollection.add(new ChessMove(myPosition, new ChessPosition(positionRow + 1, positionCol - 1), ChessPiece.PieceType.QUEEN));
+                    moveCollection.add(new ChessMove(myPosition, new ChessPosition(positionRow + 1, positionCol - 1), ChessPiece.PieceType.BISHOP));
+                    moveCollection.add(new ChessMove(myPosition, new ChessPosition(positionRow + 1, positionCol - 1), ChessPiece.PieceType.KNIGHT));
+                    moveCollection.add(new ChessMove(myPosition, new ChessPosition(positionRow + 1, positionCol - 1), ChessPiece.PieceType.ROOK));
+                } else {
+                    moveCollection.add(new ChessMove(myPosition, new ChessPosition(positionRow + 1, positionCol - 1)));
+                }
+            }
+            // check if at start
+            if (positionRow == 2 && pieceAtLocation(positionRow + 1, positionCol) == Options.EMPTY && pieceAtLocation(positionRow + 2, positionCol) == Options.EMPTY) {
+                moveCollection.add(new ChessMove(myPosition,new ChessPosition(positionRow + 2,positionCol)));
+            }
+            // if black
+        } else {
+            // check below
+            if (pieceAtLocation(positionRow - 1, positionCol) == Options.EMPTY) {
+                if ((positionRow - 1) == 1) {
+                    moveCollection.add(new ChessMove(myPosition, new ChessPosition(positionRow - 1, positionCol), ChessPiece.PieceType.BISHOP));
+                    moveCollection.add(new ChessMove(myPosition, new ChessPosition(positionRow - 1, positionCol), ChessPiece.PieceType.KNIGHT));
+                    moveCollection.add(new ChessMove(myPosition, new ChessPosition(positionRow - 1, positionCol), ChessPiece.PieceType.QUEEN));
+                    moveCollection.add(new ChessMove(myPosition, new ChessPosition(positionRow - 1, positionCol), ChessPiece.PieceType.ROOK));
+                } else {
+                    moveCollection.add(new ChessMove(myPosition, new ChessPosition(positionRow - 1, positionCol)));
+                }
+            }
+            // check right kill
+            if (isOnBoard(positionRow - 1, positionCol + 1) && pieceAtLocation(positionRow - 1, positionCol + 1) == Options.WHITE) {
+                if ((positionRow - 1) == 1) {
+                    moveCollection.add(new ChessMove(myPosition, new ChessPosition(positionRow - 1, positionCol + 1), ChessPiece.PieceType.BISHOP));
+                    moveCollection.add(new ChessMove(myPosition, new ChessPosition(positionRow - 1, positionCol + 1), ChessPiece.PieceType.KNIGHT));
+                    moveCollection.add(new ChessMove(myPosition, new ChessPosition(positionRow - 1, positionCol + 1), ChessPiece.PieceType.QUEEN));
+                    moveCollection.add(new ChessMove(myPosition, new ChessPosition(positionRow - 1, positionCol + 1), ChessPiece.PieceType.ROOK));
+                } else {
+                    moveCollection.add(new ChessMove(myPosition, new ChessPosition(positionRow - 1, positionCol + 1)));
+                }
+            }
+            // check left kill
+            if (isOnBoard(positionRow - 1, positionCol - 1) && pieceAtLocation(positionRow - 1, positionCol - 1) == Options.WHITE) {
+                if ((positionRow - 1) == 1) {
+                    moveCollection.add(new ChessMove(myPosition, new ChessPosition(positionRow - 1, positionCol - 1), ChessPiece.PieceType.BISHOP));
+                    moveCollection.add(new ChessMove(myPosition, new ChessPosition(positionRow - 1, positionCol - 1), ChessPiece.PieceType.KNIGHT));
+                    moveCollection.add(new ChessMove(myPosition, new ChessPosition(positionRow - 1, positionCol - 1), ChessPiece.PieceType.QUEEN));
+                    moveCollection.add(new ChessMove(myPosition, new ChessPosition(positionRow - 1, positionCol - 1), ChessPiece.PieceType.ROOK));
+                } else {
+                    moveCollection.add(new ChessMove(myPosition, new ChessPosition(positionRow - 1, positionCol - 1)));
+                }
+            }
+            // check if at start
+            if (positionRow == 7 && pieceAtLocation(positionRow - 1, positionCol) == Options.EMPTY && pieceAtLocation(positionRow - 2, positionCol) == Options.EMPTY) {
+                moveCollection.add(new ChessMove(myPosition,new ChessPosition(positionRow - 2,positionCol)));
+            }
+        }
         return moveCollection;
     }
 
