@@ -36,7 +36,7 @@ public class MoveCalculator {
     public Collection<ChessMove> calculateMoves() {
         ChessPiece.PieceType pieceType = board.getPiece(myPosition).getPieceType();
         Collection<ChessMove> moveCollection;
-
+        // calculate move set based on piece type
         switch (pieceType) {
             case KING -> { moveCollection = calculateKing(); }
             case QUEEN -> { moveCollection = calculateQueen(); }
@@ -51,27 +51,35 @@ public class MoveCalculator {
 
     private Collection<ChessMove> calculateKing() {
         Collection<ChessMove> moveCollection = new LinkedList<ChessMove>();
+        // check up
         if (isOnBoard(positionRow + 1,positionCol) && pieceAtLocation(positionRow + 1,positionCol) != teamColor) {
             moveCollection.add(new ChessMove(myPosition,new ChessPosition(positionRow + 1,positionCol)));
         }
+        // check down
         if (isOnBoard(positionRow - 1,positionCol) && pieceAtLocation(positionRow - 1,positionCol) != teamColor) {
             moveCollection.add(new ChessMove(myPosition,new ChessPosition(positionRow - 1,positionCol)));
         }
+        // check right
         if (isOnBoard(positionRow,positionCol + 1) && pieceAtLocation(positionRow,positionCol + 1) != teamColor) {
             moveCollection.add(new ChessMove(myPosition,new ChessPosition(positionRow,positionCol + 1)));
         }
+        // check left
         if (isOnBoard(positionRow,positionCol - 1) && pieceAtLocation(positionRow,positionCol - 1) != teamColor) {
             moveCollection.add(new ChessMove(myPosition,new ChessPosition(positionRow,positionCol - 1)));
         }
+        // check up right diagonal
         if (isOnBoard(positionRow + 1,positionCol + 1) && pieceAtLocation(positionRow + 1,positionCol + 1) != teamColor) {
             moveCollection.add(new ChessMove(myPosition,new ChessPosition(positionRow + 1,positionCol + 1)));
         }
+        // check down left diagonal
         if (isOnBoard(positionRow - 1,positionCol - 1) && pieceAtLocation(positionRow - 1,positionCol - 1) != teamColor) {
             moveCollection.add(new ChessMove(myPosition,new ChessPosition(positionRow - 1,positionCol - 1)));
         }
+        // check up left diagonal
         if (isOnBoard(positionRow + 1,positionCol - 1) && pieceAtLocation(positionRow + 1,positionCol - 1) != teamColor) {
             moveCollection.add(new ChessMove(myPosition,new ChessPosition(positionRow + 1,positionCol - 1)));
         }
+        // check down right diagonal
         if (isOnBoard(positionRow - 1,positionCol + 1) && pieceAtLocation(positionRow - 1,positionCol + 1) != teamColor) {
             moveCollection.add(new ChessMove(myPosition,new ChessPosition(positionRow - 1,positionCol + 1)));
         }
@@ -86,6 +94,51 @@ public class MoveCalculator {
 
     private Collection<ChessMove> calculateBishop() {
         Collection<ChessMove> moveCollection = new LinkedList<ChessMove>();
+        // check up right diagonal
+        for (int i = 1;;i++) {
+            if (!isOnBoard(positionRow + i,positionCol + i) || pieceAtLocation(positionRow + i,positionCol + i) == teamColor) {
+                break;
+            } else if (pieceAtLocation(positionRow + i,positionCol + i) == enemyColor) {
+                moveCollection.add(new ChessMove(myPosition,new ChessPosition(positionRow + i,positionCol + i)));
+                break;
+            } else {
+                moveCollection.add(new ChessMove(myPosition,new ChessPosition(positionRow + i,positionCol + i)));
+            }
+        }
+        // check up left diagonal
+        for (int i = 1;;i++) {
+            if (!isOnBoard(positionRow + i,positionCol - i) || pieceAtLocation(positionRow + i,positionCol - i) == teamColor) {
+                break;
+            } else if (pieceAtLocation(positionRow + i,positionCol - i) == enemyColor) {
+                moveCollection.add(new ChessMove(myPosition,new ChessPosition(positionRow + i,positionCol - i)));
+                break;
+            } else {
+                moveCollection.add(new ChessMove(myPosition,new ChessPosition(positionRow + i,positionCol - i)));
+            }
+        }
+        // check down right diagonal
+        for (int i = 1;;i++) {
+            if (!isOnBoard(positionRow - i,positionCol + i) || pieceAtLocation(positionRow - i,positionCol + i) == teamColor) {
+                break;
+            } else if (pieceAtLocation(positionRow - i,positionCol + i) == enemyColor) {
+                moveCollection.add(new ChessMove(myPosition,new ChessPosition(positionRow - i,positionCol + i)));
+                break;
+            } else {
+                moveCollection.add(new ChessMove(myPosition,new ChessPosition(positionRow - i,positionCol + i)));
+            }
+        }
+        // check down left diagonal
+        for (int i = 1;;i++) {
+            if (!isOnBoard(positionRow - i,positionCol - i) || pieceAtLocation(positionRow - i,positionCol - i) == teamColor) {
+                break;
+            } else if (pieceAtLocation(positionRow - i,positionCol - i) == enemyColor) {
+                moveCollection.add(new ChessMove(myPosition,new ChessPosition(positionRow - i,positionCol - i)));
+                break;
+            } else {
+                moveCollection.add(new ChessMove(myPosition,new ChessPosition(positionRow - i,positionCol - i)));
+            }
+        }
+
         return moveCollection;
     }
 
@@ -96,6 +149,50 @@ public class MoveCalculator {
 
     private Collection<ChessMove> calculateRook() {
         Collection<ChessMove> moveCollection = new LinkedList<ChessMove>();
+        // check right
+        for (int i = 1;;i++) {
+            if (!isOnBoard(positionRow,positionCol + i) || pieceAtLocation(positionRow,positionCol + i) == teamColor) {
+                break;
+            } else if (pieceAtLocation(positionRow,positionCol + i) == enemyColor) {
+                moveCollection.add(new ChessMove(myPosition,new ChessPosition(positionRow,positionCol + i)));
+                break;
+            } else {
+                moveCollection.add(new ChessMove(myPosition,new ChessPosition(positionRow,positionCol + i)));
+            }
+        }
+        // check left
+        for (int i = 1;;i++) {
+            if (!isOnBoard(positionRow,positionCol - i) || pieceAtLocation(positionRow,positionCol - i) == teamColor) {
+                break;
+            } else if (pieceAtLocation(positionRow,positionCol - i) == enemyColor) {
+                moveCollection.add(new ChessMove(myPosition,new ChessPosition(positionRow,positionCol - i)));
+                break;
+            } else {
+                moveCollection.add(new ChessMove(myPosition,new ChessPosition(positionRow,positionCol - i)));
+            }
+        }
+        // check up
+        for (int i = 1;;i++) {
+            if (!isOnBoard(positionRow + i,positionCol) || pieceAtLocation(positionRow + i,positionCol) == teamColor) {
+                break;
+            } else if (pieceAtLocation(positionRow + i,positionCol) == enemyColor) {
+                moveCollection.add(new ChessMove(myPosition,new ChessPosition(positionRow + i,positionCol)));
+                break;
+            } else {
+                moveCollection.add(new ChessMove(myPosition,new ChessPosition(positionRow + i,positionCol)));
+            }
+        }
+        // check down
+        for (int i = 1;;i++) {
+            if (!isOnBoard(positionRow - i,positionCol) || pieceAtLocation(positionRow - i,positionCol) == teamColor) {
+                break;
+            } else if (pieceAtLocation(positionRow - i,positionCol) == enemyColor) {
+                moveCollection.add(new ChessMove(myPosition,new ChessPosition(positionRow - i,positionCol)));
+                break;
+            } else {
+                moveCollection.add(new ChessMove(myPosition,new ChessPosition(positionRow - i,positionCol)));
+            }
+        }
         return moveCollection;
     }
 
@@ -104,12 +201,14 @@ public class MoveCalculator {
         return moveCollection;
     }
 
+    // check if the proposed position is on the board
     private boolean isOnBoard(int row, int col) {
         if (row > 8 || row < 1) {
             return false;
         } else return !(col > 8 || col < 1);
     }
 
+    // returns the contents of the proposed position on the board
     private Options pieceAtLocation(int row, int col) {
         ChessPosition location = new ChessPosition(row, col);
         if (board.getPiece(location) == null) {
