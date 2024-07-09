@@ -1,5 +1,6 @@
 package chess;
 
+import java.util.ArrayList;
 import java.util.Collection;
 
 /**
@@ -68,7 +69,36 @@ public class ChessGame {
      * @return True if the specified team is in check
      */
     public boolean isInCheck(TeamColor teamColor) {
-        throw new RuntimeException("Not implemented");
+        // get king location
+        ChessPosition kingPosition = null;
+        for (int i = 1; i <= 8; i++) {
+            for (int j = 1; j <= 8; j++) {
+                ChessPiece piece = chessBoard.getPiece(new ChessPosition(i,j));
+                // if not null and same team and king, save as king position
+                if (piece != null && piece.getTeamColor() == teamColor && piece.getPieceType() == ChessPiece.PieceType.KING) {
+                    kingPosition = new ChessPosition(i,j);
+                }
+            }
+        }
+
+        // check if in danger
+        for (int i = 1; i <= 8; i++) {
+            for (int j = 1; j <= 8; j++) {
+                ChessPiece piece = chessBoard.getPiece(new ChessPosition(i,j));
+                // if not null and not on the same team, check move list for if a move kills king
+                if (piece != null && piece.getTeamColor() != teamColor) {
+                    Collection<ChessMove> moveList = piece.pieceMoves(chessBoard, new ChessPosition(i,j));
+                    for (ChessMove move : moveList) {
+                        // if move kills king, return check true
+                        if (move.getEndPosition().equals(kingPosition)) {
+                            return true;
+                        }
+                    }
+                }
+            }
+        }
+        // if no moves kill king return check false
+        return false;
     }
 
     /**

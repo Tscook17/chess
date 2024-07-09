@@ -3,7 +3,7 @@ package chess.helperClasses;
 import chess.*;
 
 import java.util.Collection;
-import java.util.LinkedList;
+import java.util.ArrayList;
 
 public class MoveCalculator {
     private final ChessBoard board;
@@ -44,13 +44,13 @@ public class MoveCalculator {
             case KNIGHT -> moveCollection = calculateKnight();
             case ROOK -> moveCollection = calculateRook();
             case PAWN -> moveCollection = calculatePawn();
-            default -> moveCollection = new LinkedList<ChessMove>();
+            default -> moveCollection = new ArrayList<ChessMove>();
         }
         return moveCollection;
     }
 
     private Collection<ChessMove> calculateKing() {
-        Collection<ChessMove> moveCollection = new LinkedList<ChessMove>();
+        Collection<ChessMove> moveCollection = new ArrayList<ChessMove>();
         // check up
         if (isOnBoard(positionRow + 1,positionCol) && pieceAtLocation(positionRow + 1,positionCol) != teamColor) {
             moveCollection.add(new ChessMove(myPosition,new ChessPosition(positionRow + 1,positionCol)));
@@ -94,7 +94,7 @@ public class MoveCalculator {
     }
 
     private Collection<ChessMove> calculateBishop() {
-        Collection<ChessMove> moveCollection = new LinkedList<ChessMove>();
+        Collection<ChessMove> moveCollection = new ArrayList<ChessMove>();
         // check up right diagonal
         for (int i = 1;;i++) {
             if (!isOnBoard(positionRow + i,positionCol + i) || pieceAtLocation(positionRow + i,positionCol + i) == teamColor) {
@@ -144,7 +144,7 @@ public class MoveCalculator {
     }
 
     private Collection<ChessMove> calculateKnight() {
-        Collection<ChessMove> moveCollection = new LinkedList<ChessMove>();
+        Collection<ChessMove> moveCollection = new ArrayList<ChessMove>();
         // check up left
         if (isOnBoard(positionRow + 2,positionCol - 1) && pieceAtLocation(positionRow + 2,positionCol - 1) != teamColor) {
             moveCollection.add(new ChessMove(myPosition,new ChessPosition(positionRow + 2,positionCol - 1)));
@@ -181,7 +181,7 @@ public class MoveCalculator {
     }
 
     private Collection<ChessMove> calculateRook() {
-        Collection<ChessMove> moveCollection = new LinkedList<ChessMove>();
+        Collection<ChessMove> moveCollection = new ArrayList<ChessMove>();
         // check right
         for (int i = 1;;i++) {
             if (!isOnBoard(positionRow,positionCol + i) || pieceAtLocation(positionRow,positionCol + i) == teamColor) {
@@ -230,7 +230,7 @@ public class MoveCalculator {
     }
 
     private Collection<ChessMove> calculatePawn() {
-        Collection<ChessMove> moveCollection = new LinkedList<ChessMove>();
+        Collection<ChessMove> moveCollection = new ArrayList<ChessMove>();
         // if white
         if (teamColor == Options.WHITE) {
             // check above
