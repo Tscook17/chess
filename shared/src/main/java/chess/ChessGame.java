@@ -12,9 +12,11 @@ import java.util.Collection;
 public class ChessGame {
     private ChessBoard chessBoard = new ChessBoard();
     private TeamColor currentTurn = TeamColor.WHITE;
+    private ArrayList<ChessMove> previousMoveList;
 
     public ChessGame() {
         chessBoard.resetBoard();
+        previousMoveList = new ArrayList<ChessMove>();
     }
 
     /**
@@ -55,10 +57,22 @@ public class ChessGame {
         // create temp game
         Collection<ChessMove> preMoveList = chessBoard.getPiece(startPosition).pieceMoves(chessBoard, startPosition);
         ChessGame tempGame = new ChessGame();
-
         TeamColor teamColor = chessBoard.getPiece(startPosition).getTeamColor();
-        Collection<ChessMove> postMoveList = new ArrayList<ChessMove>();
 
+        // check for en passant
+        if (chessBoard.getPiece(startPosition).getPieceType() == ChessPiece.PieceType.PAWN) {
+            if (startPosition.getRow() == 4 || startPosition.getRow() == 5) {
+                ChessMove passantMove = isEnPassant(startPosition);
+                if (passantMove != null) {
+                    preMoveList.add(passantMove);
+                }
+            }
+        }
+
+        // check for castling
+
+        // check all possible moves for validity
+        Collection<ChessMove> postMoveList = new ArrayList<ChessMove>();
         for (ChessMove move : preMoveList) {
             // pass temp board
             ChessBoard tempBoard = new ChessBoard(chessBoard);
@@ -85,11 +99,16 @@ public class ChessGame {
         if (piece == null || piece.getTeamColor() != currentTurn) {
             throw new InvalidMoveException();
         }
+        // update en passant if needed
+        if (isEnPassant(move.getStartPosition()) != null) {
+            move.setEnPassant(true);
+        }
         // check if move is among valid moves else throw error
         Collection<ChessMove> validMoves = validMoves(move.getStartPosition());
         for (ChessMove validMove : validMoves) {
             if (validMove.equals(move)) {
                 makeMoveOnBoard(move);
+                previousMoveList.add(move);
                 // update current turn
                 if (piece.getTeamColor() == TeamColor.WHITE) {
                     setTeamTurn(TeamColor.BLACK);
@@ -111,6 +130,14 @@ public class ChessGame {
         } else {
             ChessPiece promotionPiece = new ChessPiece(piece.getTeamColor(),move.getPromotionPiece());
             chessBoard.addPiece(move.getEndPosition(), promotionPiece);
+        }
+        // erase killed pawn if en passant
+        if (move.isEnPassant()) {
+            if (chessBoard.getPiece(move.getEndPosition()).getTeamColor() == TeamColor.WHITE) {
+                chessBoard.addPiece(new ChessPosition(move.getEndPosition().getRow()-1,move.getEndPosition().getColumn()), null);
+            } else {
+                chessBoard.addPiece(new ChessPosition(move.getEndPosition().getRow()+1,move.getEndPosition().getColumn()), null);
+            }
         }
         // erase old
         chessBoard.addPiece(move.getStartPosition(), null);
@@ -194,6 +221,47 @@ public class ChessGame {
         return possibleMoves.isEmpty();
     }
 
+    // takes current move and checks if en passant possible, if yes returns the move if not returns null
+    private ChessMove isEnPassant(ChessPosition position) {
+        ChessGame.TeamColor goodColor = chessBoard.getPiece(position).getTeamColor();
+        // check if previous move on record
+        if (previousMoveList.isEmpty()) {
+            return null;
+        }
+        ChessMove previousMove = previousMoveList.getLast();
+        ChessPiece.PieceType previousPiece = chessBoard.getPiece(previousMove.getEndPosition()).getPieceType();
+
+        // check if last move was a pawn
+        if (previousPiece == ChessPiece.PieceType.PAWN) {
+            // if white pawn
+            if (goodColor == TeamColor.WHITE) {
+                // check if last move was a pawn double move
+                if (previousMove.getStartPosition().getRow() == 7 && previousMove.getEndPosition().getRow() == 5) {
+                    // if to the right
+                    if (previousMove.getStartPosition().getColumn() == position.getColumn() + 1) {
+                        return new ChessMove(position,new ChessPosition(6,position.getColumn() + 1),true);
+                        // if to the left
+                    } else if (previousMove.getStartPosition().getColumn() == position.getColumn() - 1) {
+                        return new ChessMove(position,new ChessPosition(6,position.getColumn() - 1),true);
+                    }
+                }
+                // if black pawn
+            } else {
+                // check if last move was a pawn double move
+                if (previousMove.getStartPosition().getRow() == 2 && previousMove.getEndPosition().getRow() == 4) {
+                    // if to the right
+                    if (previousMove.getStartPosition().getColumn() == position.getColumn() + 1) {
+                        return new ChessMove(position,new ChessPosition(3,position.getColumn() + 1),true);
+                        // if to the left
+                    } else if (previousMove.getStartPosition().getColumn() == position.getColumn() - 1) {
+                        return new ChessMove(position,new ChessPosition(3,position.getColumn() - 1),true);
+                    }
+                }
+            }
+        }
+        return null;
+    }
+
     /**
      * Sets this game's chessboard with a given board
      *
@@ -201,6 +269,7 @@ public class ChessGame {
      */
     public void setBoard(ChessBoard board) {
         chessBoard = board;
+        previousMoveList = new ArrayList<ChessMove>();
     }
 
     /**
