@@ -82,20 +82,38 @@ public class ChessGame {
      * @throws InvalidMoveException if move is invalid
      */
     public void makeMove(ChessMove move) throws InvalidMoveException {
-        // check if piece exists and if your turn
-
-        // get temp board
-
-        // make move
-
-        // check if in check
-
-        // if not valid, if yes invalid
+        ChessPiece piece = chessBoard.getPiece(move.getStartPosition());
+        // check if teams turn
+        if (piece == null || piece.getTeamColor() != currentTurn) {
+            throw new InvalidMoveException();
+        }
+        // check if move is among valid moves else throw error
+        Collection<ChessMove> validMoves = validMoves(move.getStartPosition());
+        for (ChessMove validMove : validMoves) {
+            if (validMove.equals(move)) {
+                makeTempMove(move);
+                // update current turn
+                if (piece.getTeamColor() == TeamColor.WHITE) {
+                    setTeamTurn(TeamColor.BLACK);
+                } else {
+                    setTeamTurn(TeamColor.WHITE);
+                }
+                return;
+            }
+        }
+        throw new InvalidMoveException();
     }
 
     private void makeTempMove(ChessMove move) {
+        ChessPiece piece = chessBoard.getPiece(move.getStartPosition());
         // add new
-        chessBoard.addPiece(move.getEndPosition(), chessBoard.getPiece(move.getStartPosition()));
+        if (move.getPromotionPiece() == null) {
+            chessBoard.addPiece(move.getEndPosition(), piece);
+        } else {
+            ChessPiece promotionPiece = new ChessPiece(piece.getTeamColor(),move.getPromotionPiece());
+            chessBoard.addPiece(move.getEndPosition(), promotionPiece);
+        }
+
         // erase old
         chessBoard.addPiece(move.getStartPosition(), null);
     }
