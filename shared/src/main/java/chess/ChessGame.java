@@ -49,7 +49,30 @@ public class ChessGame {
      * startPosition
      */
     public Collection<ChessMove> validMoves(ChessPosition startPosition) {
-        throw new RuntimeException("Not implemented");
+        if (chessBoard.getPiece(startPosition) == null) {
+            return null;
+        }
+        // create temp game
+        Collection<ChessMove> preMoveList = chessBoard.getPiece(startPosition).pieceMoves(chessBoard, startPosition);
+        ChessGame tempGame = new ChessGame();
+
+        TeamColor teamColor = chessBoard.getPiece(startPosition).getTeamColor();
+        Collection<ChessMove> postMoveList = new ArrayList<ChessMove>();
+
+        for (ChessMove move : preMoveList) {
+            // pass temp board
+            ChessBoard tempBoard = new ChessBoard(chessBoard);
+            tempGame.setBoard(tempBoard);
+
+            // make move
+            tempGame.makeTempMove(move);
+
+            // check if not in check
+            if (!tempGame.isInCheck(teamColor)) {
+                postMoveList.add(move);
+            }
+        }
+        return postMoveList;
     }
 
     /**
@@ -59,7 +82,22 @@ public class ChessGame {
      * @throws InvalidMoveException if move is invalid
      */
     public void makeMove(ChessMove move) throws InvalidMoveException {
-        throw new RuntimeException("Not implemented");
+        // check if piece exists and if your turn
+
+        // get temp board
+
+        // make move
+
+        // check if in check
+
+        // if not valid, if yes invalid
+    }
+
+    private void makeTempMove(ChessMove move) {
+        // add new
+        chessBoard.addPiece(move.getEndPosition(), chessBoard.getPiece(move.getStartPosition()));
+        // erase old
+        chessBoard.addPiece(move.getStartPosition(), null);
     }
 
     /**
