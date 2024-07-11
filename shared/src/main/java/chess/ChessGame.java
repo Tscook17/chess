@@ -70,6 +70,16 @@ public class ChessGame {
         }
 
         // check for castling
+        if (chessBoard.getPiece(startPosition).getPieceType() == ChessPiece.PieceType.KING) {
+            ChessMove castlingMoveQueen = isCastling(startPosition,true);
+            if (castlingMoveQueen != null) {
+                preMoveList.add(castlingMoveQueen);
+            }
+            ChessMove castlingMoveKing = isCastling(startPosition,false);
+            if (castlingMoveKing != null) {
+                preMoveList.add(castlingMoveKing);
+            }
+        }
 
         // check all possible moves for validity
         Collection<ChessMove> postMoveList = new ArrayList<ChessMove>();
@@ -100,8 +110,20 @@ public class ChessGame {
             throw new InvalidMoveException();
         }
         // update en passant if needed
-        if (isEnPassant(move.getStartPosition()) != null) {
+        if (piece.getPieceType() == ChessPiece.PieceType.PAWN && isEnPassant(move.getStartPosition()) != null) {
             move.setEnPassant(true);
+        }
+        int startCol = move.getStartPosition().getColumn();
+        int endCol = move.getEndPosition().getColumn();
+        // update castling queen side if needed
+        if (piece.getPieceType() == ChessPiece.PieceType.KING && isCastling(move.getStartPosition(),true) != null &&
+                (startCol - endCol) == 2) {
+            move.setCastlingQueenSide(true);
+        }
+        // update castling king side if needed
+        if (piece.getPieceType() == ChessPiece.PieceType.KING && isCastling(move.getStartPosition(),false) != null &&
+                (endCol - startCol) == 2) {
+            move.setCastlingKingSide(true);
         }
         // check if move is among valid moves else throw error
         Collection<ChessMove> validMoves = validMoves(move.getStartPosition());
@@ -130,6 +152,22 @@ public class ChessGame {
         } else {
             ChessPiece promotionPiece = new ChessPiece(piece.getTeamColor(),move.getPromotionPiece());
             chessBoard.addPiece(move.getEndPosition(), promotionPiece);
+        }
+        // add and erase rook if castling queen side
+        if (move.isCastlingQueenSide()) {
+            // add rook
+            ChessPiece queenRook = chessBoard.getPiece(new ChessPosition(move.getEndPosition().getRow(),move.getEndPosition().getColumn()-2));
+            chessBoard.addPiece(new ChessPosition(move.getEndPosition().getRow(),move.getEndPosition().getColumn()+1),queenRook);
+            // erase rook
+            chessBoard.addPiece(new ChessPosition(move.getEndPosition().getRow(),move.getEndPosition().getColumn()-2),null);
+        }
+        // add and erase rook if castling king side
+        if (move.isCastlingKingSide()) {
+            // add rook
+            ChessPiece kingRook = chessBoard.getPiece(new ChessPosition(move.getEndPosition().getRow(),move.getEndPosition().getColumn()+1));
+            chessBoard.addPiece(new ChessPosition(move.getEndPosition().getRow(),move.getEndPosition().getColumn()-1),kingRook);
+            // erase rook
+            chessBoard.addPiece(new ChessPosition(move.getEndPosition().getRow(),move.getEndPosition().getColumn()+1),null);
         }
         // erase killed pawn if en passant
         if (move.isEnPassant()) {
@@ -161,7 +199,11 @@ public class ChessGame {
                 }
             }
         }
+        // check if in danger
+        return inDanger(kingPosition,teamColor);
+    }
 
+    private boolean inDanger(ChessPosition position, ChessGame.TeamColor teamColor) {
         // check if in danger
         for (int i = 1; i <= 8; i++) {
             for (int j = 1; j <= 8; j++) {
@@ -171,14 +213,13 @@ public class ChessGame {
                     Collection<ChessMove> moveList = piece.pieceMoves(chessBoard, new ChessPosition(i,j));
                     for (ChessMove move : moveList) {
                         // if move kills king, return check true
-                        if (move.getEndPosition().equals(kingPosition)) {
+                        if (move.getEndPosition().equals(position)) {
                             return true;
                         }
                     }
                 }
             }
         }
-        // if no moves kill king return check false
         return false;
     }
 
@@ -255,6 +296,66 @@ public class ChessGame {
                         // if to the left
                     } else if (previousMove.getStartPosition().getColumn() == position.getColumn() - 1) {
                         return new ChessMove(position,new ChessPosition(3,position.getColumn() - 1),true);
+                    }
+                }
+            }
+        }
+        return null;
+    }
+
+    // checks if castling is possible
+    private ChessMove isCastling(ChessPosition position, boolean checkQueenSide) {
+        ChessGame.TeamColor goodColor = chessBoard.getPiece(position).getTeamColor();
+        int posRow = position.getRow();
+        int posCol = position.getColumn();
+
+        if ((posRow == 1 || posRow == 8) && posCol == 5) {
+            if (checkQueenSide) {
+                // check if queen side castle available
+                if ((chessBoard.getPiece(new ChessPosition(posRow, posCol - 1)) == null) &&
+                        (chessBoard.getPiece(new ChessPosition(posRow, posCol - 2)) == null) &&
+                        (chessBoard.getPiece(new ChessPosition(posRow, posCol - 3)) == null) &&
+                        !isInCheck(goodColor)) {
+                    if (!inDanger(new ChessPosition(posRow, posCol - 2), goodColor) && !inDanger(new ChessPosition(posRow, posCol - 1), goodColor)) {
+                        // check if previous moves on record
+                        if (!previousMoveList.isEmpty()) {
+                            for (ChessMove move : previousMoveList) {
+                                if (move.getStartPosition().equals(position) || move.getStartPosition().equals(new ChessPosition(posRow, posCol - 4))) {
+                                    return null;
+                                }
+                            }
+                            ChessMove toReturn = new ChessMove(position, new ChessPosition(posRow, posCol - 2));
+                            toReturn.setCastlingQueenSide(true);
+                            return toReturn;
+                        } else {
+                            ChessMove toReturn = new ChessMove(position, new ChessPosition(posRow, posCol - 2));
+                            toReturn.setCastlingQueenSide(true);
+                            return toReturn;
+                        }
+                    }
+                }
+
+                // check if king side castle available
+            } else {
+                if ((chessBoard.getPiece(new ChessPosition(posRow, posCol + 1)) == null) &&
+                        (chessBoard.getPiece(new ChessPosition(posRow, posCol + 2)) == null) &&
+                        !isInCheck(goodColor)) {
+                    if (!inDanger(new ChessPosition(posRow, posCol + 2), goodColor) && !inDanger(new ChessPosition(posRow, posCol + 1), goodColor)) {
+                        // check if previous moves on record
+                        if (!previousMoveList.isEmpty()) {
+                            for (ChessMove move : previousMoveList) {
+                                if (move.getStartPosition().equals(position) || move.getStartPosition().equals(new ChessPosition(posRow, posCol + 3))) {
+                                    return null;
+                                }
+                            }
+                            ChessMove toReturn = new ChessMove(position, new ChessPosition(posRow, posCol + 2));
+                            toReturn.setCastlingQueenSide(true);
+                            return toReturn;
+                        } else {
+                            ChessMove toReturn = new ChessMove(position, new ChessPosition(posRow, posCol + 2));
+                            toReturn.setCastlingQueenSide(true);
+                            return toReturn;
+                        }
                     }
                 }
             }

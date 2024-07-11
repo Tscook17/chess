@@ -13,6 +13,8 @@ public class ChessMove {
     private final ChessPosition endPosition;
     private final ChessPiece.PieceType promotionPiece;
     private boolean enPassant = false;
+    private boolean castlingQueenSide = false;
+    private boolean castlingKingSide = false;
 
     public ChessMove(ChessPosition startPosition, ChessPosition endPosition,
                      ChessPiece.PieceType promotionPiece) {
@@ -28,6 +30,22 @@ public class ChessMove {
     public ChessMove(ChessPosition startPosition, ChessPosition endPosition, boolean enPassant) {
         this(startPosition, endPosition);
         this.enPassant = enPassant;
+    }
+
+    public boolean isCastlingQueenSide() {
+        return castlingQueenSide;
+    }
+
+    public void setCastlingQueenSide(boolean castlingQueenSide) {
+        this.castlingQueenSide = castlingQueenSide;
+    }
+
+    public boolean isCastlingKingSide() {
+        return castlingKingSide;
+    }
+
+    public void setCastlingKingSide(boolean castlingKingSide) {
+        this.castlingKingSide = castlingKingSide;
     }
 
     public boolean isEnPassant() {
