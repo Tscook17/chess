@@ -10,13 +10,21 @@ public class UserDAO implements UserDAOInterface {
     private static Map<String, UserData> UserDataDB = new HashMap<>();
 
     @Override
-    public void createUser(String userData) throws DataAccessException {
-
+    public void createUser(UserData userData) throws DataAccessException {
+        if (!UserDataDB.containsKey(userData.username())) {
+            UserDataDB.put(userData.username(), userData);
+        } else {
+            throw new DataAccessException("Error: "); // fixme
+        }
     }
 
     @Override
     public UserData getUser(String username) throws DataAccessException {
-        return null;
+        if (UserDataDB.containsKey(username)) {
+            return UserDataDB.get(username);
+        } else {
+            throw new DataAccessException("Error: "); // fixme
+        }
     }
 
     @Override

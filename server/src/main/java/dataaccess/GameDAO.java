@@ -11,17 +11,21 @@ public class GameDAO implements GameDAOInterface {
 
     @Override
     public String createGame(String gameName) {
-        return "";
+        return ""; //fixme
     }
 
     @Override
     public GameData getGame(String gameID) throws DataAccessException {
-        return null;
+        if (GameDataDB.containsKey(gameID)) {
+            return GameDataDB.get(gameID);
+        } else {
+            throw new DataAccessException("Error: "); // fixme
+        }
     }
 
     @Override
     public GameData[] listGames() {
-        return new GameData[0];
+        return GameDataDB.values().toArray(new GameData[0]);
     }
 
     @Override
