@@ -1,4 +1,4 @@
 package service.result;
 
-public class JoinGameResult extends ResultParent {
+public class JoinGameResult {
 }

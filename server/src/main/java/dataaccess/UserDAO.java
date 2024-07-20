@@ -11,20 +11,12 @@ public class UserDAO implements UserDAOInterface {
 
     @Override
     public void createUser(UserData userData) throws DataAccessException {
-        if (!UserDataDB.containsKey(userData.username())) {
-            UserDataDB.put(userData.username(), userData);
-        } else {
-            throw new DataAccessException("Error: "); // fixme
-        }
+        UserDataDB.put(userData.username(), userData);
     }
 
     @Override
     public UserData getUser(String username) throws DataAccessException {
-        if (UserDataDB.containsKey(username)) {
-            return UserDataDB.get(username);
-        } else {
-            throw new DataAccessException("Error: "); // fixme
-        }
+        return UserDataDB.getOrDefault(username, null);
     }
 
     @Override
