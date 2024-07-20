@@ -10,16 +10,25 @@ public class Server {
         Spark.staticFiles.location("web");
 
         // Register your endpoints and handle exceptions here.
-
-        //This line initializes the server and can be removed once you have a functioning endpoint 
-        Spark.init();
+        createRoutes();
 
         Spark.awaitInitialization();
+        System.out.println("Listening on port " + desiredPort);
         return Spark.port();
     }
 
     public void stop() {
         Spark.stop();
         Spark.awaitStop();
+    }
+
+    private void createRoutes() {
+//        Spark.post("/user", Handler::HandleRegister);
+//        Spark.post("/session", Handler::HandleLogin);
+//        Spark.delete("/session", Handler::HandleLogout);
+//        Spark.get("/game", Handler::HandleListGames);
+//        Spark.post("/game", Handler::HandleCreateGame);
+//        Spark.put("/game", Handler::HandleJoinGame);
+        Spark.delete("/db", Handler::HandleClear);
     }
 }
