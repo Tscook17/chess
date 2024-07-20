@@ -30,5 +30,6 @@ public class Server {
 //        Spark.post("/game", Handler::HandleCreateGame);
 //        Spark.put("/game", Handler::HandleJoinGame);
         Spark.delete("/db", Handler::HandleClear);
+//        Spark.delete("/db", (req,res) -> {return "hi";});
     }
 }

@@ -3,7 +3,12 @@ package dataaccess;
 import dataaccess.DAOInterfaces.AuthDAOInterface;
 import model.AuthData;
 
+import java.util.HashMap;
+import java.util.Map;
+
 public class AuthDAO implements AuthDAOInterface {
+    private static Map<String, String> AuthDataDB = new HashMap<>();
+
     @Override
     public void createAuth(String authData) {
 
@@ -21,6 +26,6 @@ public class AuthDAO implements AuthDAOInterface {
 
     @Override
     public void clear() {
-
+        AuthDataDB.clear();
     }
 }

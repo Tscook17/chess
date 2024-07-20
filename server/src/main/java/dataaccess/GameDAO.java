@@ -3,7 +3,12 @@ package dataaccess;
 import dataaccess.DAOInterfaces.GameDAOInterface;
 import model.GameData;
 
+import java.util.HashMap;
+import java.util.Map;
+
 public class GameDAO implements GameDAOInterface {
+    private static Map<String, GameData> GameDataDB = new HashMap<>();
+
     @Override
     public String createGame(String gameName) {
         return "";
@@ -26,6 +31,6 @@ public class GameDAO implements GameDAOInterface {
 
     @Override
     public void clear() {
-
+        GameDataDB.clear();
     }
 }
