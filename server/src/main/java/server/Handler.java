@@ -5,9 +5,11 @@ import dataaccess.DataAccessException;
 import service.DatabaseService;
 import service.UserService;
 import service.request.LoginRequest;
+import service.request.LogoutRequest;
 import service.request.RegisterRequest;
 import service.result.ClearResult;
 import service.result.LoginResult;
+import service.result.LogoutResult;
 import service.result.RegisterResult;
 import spark.Request;
 import spark.Response;
@@ -54,7 +56,21 @@ public class Handler {
     }
 
     public static Object HandleLogout(Request req, Response res) {
-        return res;
+        Gson g = new Gson();
+        LogoutRequest request = new LogoutRequest(req.headers("authorization"));
+        UserService u = new UserService();
+        try {
+            LogoutResult result = u.LogoutService(request);
+            res.status(200);
+            res.body(g.toJson(result));
+            return res.body();
+        } catch(DataAccessException e) {
+            res.status(e.getErrorCode());
+            Map<String, String> pair = new HashMap<String, String>();
+            pair.put("message", e.getMessage());
+            res.body(g.toJson(pair));
+            return res.body();
+        }
     }
 
     public static Object HandleListGames(Request req, Response res) {

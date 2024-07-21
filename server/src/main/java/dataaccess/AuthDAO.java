@@ -19,7 +19,7 @@ public class AuthDAO implements AuthDAOInterface {
         if (AuthDataDB.containsKey(authToken)) {
             return new AuthData(authToken, AuthDataDB.get(authToken));
         } else {
-            throw new DataAccessException("Error: unauthorized");
+            throw new DataAccessException("Error: unauthorized", 401);
         }
     }
 
@@ -28,7 +28,7 @@ public class AuthDAO implements AuthDAOInterface {
         if (AuthDataDB.containsKey(authToken)) {
             AuthDataDB.remove(authToken);
         } else {
-            throw new DataAccessException("Error: unauthorized");
+            throw new DataAccessException("Error: unauthorized", 401);
         }
     }
 

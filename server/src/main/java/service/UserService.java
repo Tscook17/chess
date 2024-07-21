@@ -6,8 +6,10 @@ import dataaccess.UserDAO;
 import model.AuthData;
 import model.UserData;
 import service.request.LoginRequest;
+import service.request.LogoutRequest;
 import service.request.RegisterRequest;
 import service.result.LoginResult;
+import service.result.LogoutResult;
 import service.result.RegisterResult;
 
 import java.util.UUID;
@@ -37,7 +39,7 @@ public class UserService {
     public LoginResult LoginService(LoginRequest req) throws DataAccessException {
         // check if good request
         if (req.isBadRequest()) {
-            throw new DataAccessException("Error: bad request", 400);
+            throw new DataAccessException("Error: unauthorized", 401);
         }
         // get userData
         UserDAO userDB = new UserDAO();
@@ -52,5 +54,17 @@ public class UserService {
         authDB.createAuth(new AuthData(authToken, req.getUsername()));
 
         return new LoginResult(req.getUsername(), authToken);
+    }
+
+    public LogoutResult LogoutService(LogoutRequest req) throws DataAccessException {
+        // check if good request
+        if (req.isBadRequest()) {
+            throw new DataAccessException("Error: unauthorized", 401);
+        }
+        // delete authToken
+        AuthDAO authDB = new AuthDAO();
+        authDB.deleteAuth(req.getAuthToken());
+
+        return new LogoutResult();
     }
 }
