@@ -1,17 +1,24 @@
 package dataaccess;
 
+import chess.ChessGame;
 import dataaccess.DAOInterfaces.GameDAOInterface;
 import model.GameData;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
 
 public class GameDAO implements GameDAOInterface {
-    private static Map<String, GameData> GameDataDB = new HashMap<>();
+    private static Map<Integer, GameData> GameDataDB = new HashMap<>();
+    private static int currentGameID = 1;
 
     @Override
-    public String createGame(String gameName) {
-        return ""; //fixme
+    public int createGame(String gameName) {
+        GameData newGame =
+                new GameData(currentGameID, null, null, gameName, new ChessGame());
+        GameDataDB.put(currentGameID, newGame);
+
+        return currentGameID++;
     }
 
     @Override
@@ -30,7 +37,7 @@ public class GameDAO implements GameDAOInterface {
 
     @Override
     public void updateGame(String gameID, String playerColor) throws DataAccessException {
-
+        // fixme
     }
 
     @Override

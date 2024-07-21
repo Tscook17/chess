@@ -3,14 +3,13 @@ package server;
 import com.google.gson.Gson;
 import dataaccess.DataAccessException;
 import service.DatabaseService;
+import service.GameService;
 import service.UserService;
+import service.request.CreateGameRequest;
 import service.request.LoginRequest;
 import service.request.LogoutRequest;
 import service.request.RegisterRequest;
-import service.result.ClearResult;
-import service.result.LoginResult;
-import service.result.LogoutResult;
-import service.result.RegisterResult;
+import service.result.*;
 import spark.Request;
 import spark.Response;
 
@@ -78,7 +77,22 @@ public class Handler {
     }
 
     public static Object HandleCreateGame(Request req, Response res) {
-        return res;
+        Gson g = new Gson();
+        CreateGameRequest request = g.fromJson(req.body(),CreateGameRequest.class);
+        request.setAuthToken(req.headers("authorization"));
+        GameService gs = new GameService();
+        try {
+            CreateGameResult result = gs.CreateGameService(request);
+            res.status(200);
+            res.body(g.toJson(result));
+            return res.body();
+        } catch(DataAccessException e) {
+            res.status(e.getErrorCode());
+            Map<String, String> pair = new HashMap<String, String>();
+            pair.put("message", e.getMessage());
+            res.body(g.toJson(pair));
+            return res.body();
+        }
     }
 
     public static Object HandleJoinGame(Request req, Response res) {

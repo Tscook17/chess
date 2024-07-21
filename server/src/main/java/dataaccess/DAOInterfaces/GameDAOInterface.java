@@ -4,7 +4,7 @@ import dataaccess.DataAccessException;
 import model.GameData;
 
 public interface GameDAOInterface {
-    String createGame(String gameName);
+    int createGame(String gameName);
     GameData getGame(String gameID) throws DataAccessException;
     GameData[] listGames();
     void updateGame(String gameID, String playerColor) throws DataAccessException;
