@@ -70,7 +70,21 @@ public class Handler {
     }
 
     public static Object HandleListGames(Request req, Response res) {
-        return res;
+        Gson g = new Gson();
+        ListGamesRequest request = new ListGamesRequest(req.headers("authorization"));
+        GameService gs = new GameService();
+        try {
+            ListGamesResult result = gs.ListGamesService(request);
+            res.status(200);
+            res.body(g.toJson(result));
+            return res.body();
+        } catch(DataAccessException e) {
+            res.status(e.getErrorCode());
+            Map<String, String> pair = new HashMap<String, String>();
+            pair.put("message", e.getMessage());
+            res.body(g.toJson(pair));
+            return res.body();
+        }
     }
 
     public static Object HandleCreateGame(Request req, Response res) {

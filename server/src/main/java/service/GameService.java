@@ -6,8 +6,10 @@ import dataaccess.GameDAO;
 import model.AuthData;
 import service.request.CreateGameRequest;
 import service.request.JoinGameRequest;
+import service.request.ListGamesRequest;
 import service.result.CreateGameResult;
 import service.result.JoinGameResult;
+import service.result.ListGamesResult;
 
 public class GameService {
     public CreateGameResult CreateGameService(CreateGameRequest req) throws DataAccessException {
@@ -36,5 +38,14 @@ public class GameService {
         gameDB.updateGame(req.getGameID(), req.getPlayerColor(), authData.username());
 
         return new JoinGameResult();
+    }
+
+    public ListGamesResult ListGamesService(ListGamesRequest req) throws DataAccessException {
+        // get authToken
+        AuthDAO authDB = new AuthDAO();
+        AuthData authData = authDB.getAuth(req.getAuthToken());
+        // list games
+        GameDAO gameDB = new GameDAO();
+        return new ListGamesResult(gameDB.listGames());
     }
 }
