@@ -12,7 +12,7 @@ import service.result.JoinGameResult;
 import service.result.ListGamesResult;
 
 public class GameService {
-    public CreateGameResult CreateGameService(CreateGameRequest req) throws DataAccessException {
+    public static CreateGameResult CreateGameService(CreateGameRequest req) throws DataAccessException {
         // check if good request
         if (req.isBadRequest()) {
             throw new DataAccessException("Error: bad request", 400);
@@ -25,7 +25,7 @@ public class GameService {
         return new CreateGameResult(gameDB.createGame(req.getGameName()));
     }
 
-    public JoinGameResult JoinGameService(JoinGameRequest req) throws DataAccessException {
+    public static JoinGameResult JoinGameService(JoinGameRequest req) throws DataAccessException {
         // check if good request
         if (req.isBadRequest()) {
             throw new DataAccessException("Error: bad request", 400);
@@ -40,7 +40,7 @@ public class GameService {
         return new JoinGameResult();
     }
 
-    public ListGamesResult ListGamesService(ListGamesRequest req) throws DataAccessException {
+    public static ListGamesResult ListGamesService(ListGamesRequest req) throws DataAccessException {
         // get authToken
         AuthDAO authDB = new AuthDAO();
         AuthData authData = authDB.getAuth(req.getAuthToken());

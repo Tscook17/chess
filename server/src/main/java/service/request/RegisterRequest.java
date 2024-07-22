@@ -7,6 +7,12 @@ public class RegisterRequest {
     private String password;
     private String email;
 
+    public RegisterRequest(String username, String password, String email) {
+        setUsername(username);
+        setPassword(password);
+        setEmail(email);
+    }
+
     public boolean isBadRequest() {
         return (username == null || password == null || email == null);
     }

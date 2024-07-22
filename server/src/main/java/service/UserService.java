@@ -16,7 +16,7 @@ import java.util.UUID;
 
 public class UserService {
 
-    public RegisterResult RegisterService(RegisterRequest req) throws DataAccessException {
+    public static RegisterResult RegisterService(RegisterRequest req) throws DataAccessException {
         // check if good request
         if (req.isBadRequest()) {
             throw new DataAccessException("Error: bad request", 400);
@@ -36,7 +36,7 @@ public class UserService {
         return new RegisterResult(req.getUsername(), authToken);
     }
 
-    public LoginResult LoginService(LoginRequest req) throws DataAccessException {
+    public static LoginResult LoginService(LoginRequest req) throws DataAccessException {
         // check if good request
         if (req.isBadRequest()) {
             throw new DataAccessException("Error: unauthorized", 401);
@@ -56,7 +56,7 @@ public class UserService {
         return new LoginResult(req.getUsername(), authToken);
     }
 
-    public LogoutResult LogoutService(LogoutRequest req) throws DataAccessException {
+    public static LogoutResult LogoutService(LogoutRequest req) throws DataAccessException {
         // check if good request
         if (req.isBadRequest()) {
             throw new DataAccessException("Error: unauthorized", 401);
