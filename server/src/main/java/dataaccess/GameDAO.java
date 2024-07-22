@@ -6,7 +6,6 @@ import model.GameData;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.UUID;
 
 public class GameDAO implements GameDAOInterface {
     private static Map<Integer, GameData> GameDataDB = new HashMap<>();
@@ -22,11 +21,11 @@ public class GameDAO implements GameDAOInterface {
     }
 
     @Override
-    public GameData getGame(String gameID) throws DataAccessException {
+    public GameData getGame(int gameID) throws DataAccessException {
         if (GameDataDB.containsKey(gameID)) {
             return GameDataDB.get(gameID);
         } else {
-            throw new DataAccessException("Error: "); // fixme
+            throw new DataAccessException("Error: bad request", 400);
         }
     }
 
@@ -36,12 +35,34 @@ public class GameDAO implements GameDAOInterface {
     }
 
     @Override
-    public void updateGame(String gameID, String playerColor) throws DataAccessException {
-        // fixme
+    public void updateGame(int gameID, String playerColor, String username) throws DataAccessException {
+        GameData oldGame = getGame(gameID);
+        GameData newGame;
+        // check if available
+        if (isPlayerColorFree(oldGame, playerColor)) {
+            if (playerColor.equals("WHITE")) {
+                newGame =
+                        new GameData(gameID, username, oldGame.blackUsername(), oldGame.gameName(), oldGame.game());
+            } else {
+                newGame =
+                        new GameData(gameID, oldGame.whiteUsername(), username, oldGame.gameName(), oldGame.game());
+            }
+            GameDataDB.put(gameID, newGame);
+        } else {
+            throw new DataAccessException("Error: already taken", 403);
+        }
     }
 
     @Override
     public void clear() {
         GameDataDB.clear();
+    }
+
+    private boolean isPlayerColorFree(GameData game, String playerColor) throws DataAccessException {
+        if (playerColor.equalsIgnoreCase("WHITE")) {
+            return (game.whiteUsername() == null);
+        } else {
+            return (game.blackUsername() == null);
+        }
     }
 }

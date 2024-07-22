@@ -5,8 +5,8 @@ import model.GameData;
 
 public interface GameDAOInterface {
     int createGame(String gameName);
-    GameData getGame(String gameID) throws DataAccessException;
+    GameData getGame(int gameID) throws DataAccessException;
     GameData[] listGames();
-    void updateGame(String gameID, String playerColor) throws DataAccessException;
+    void updateGame(int gameID, String playerColor, String username) throws DataAccessException;
     void clear();
 }

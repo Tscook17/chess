@@ -5,10 +5,7 @@ import dataaccess.DataAccessException;
 import service.DatabaseService;
 import service.GameService;
 import service.UserService;
-import service.request.CreateGameRequest;
-import service.request.LoginRequest;
-import service.request.LogoutRequest;
-import service.request.RegisterRequest;
+import service.request.*;
 import service.result.*;
 import spark.Request;
 import spark.Response;
@@ -96,7 +93,22 @@ public class Handler {
     }
 
     public static Object HandleJoinGame(Request req, Response res) {
-        return res;
+        Gson g = new Gson();
+        JoinGameRequest request = g.fromJson(req.body(),JoinGameRequest.class);
+        request.setAuthToken(req.headers("authorization"));
+        GameService gs = new GameService();
+        try {
+            JoinGameResult result = gs.JoinGameService(request);
+            res.status(200);
+            res.body("{}");
+            return res.body();
+        } catch(DataAccessException e) {
+            res.status(e.getErrorCode());
+            Map<String, String> pair = new HashMap<String, String>();
+            pair.put("message", e.getMessage());
+            res.body(g.toJson(pair));
+            return res.body();
+        }
     }
 
     public static Object HandleClear(Request req, Response res) {
