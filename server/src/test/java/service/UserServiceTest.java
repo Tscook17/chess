@@ -1,38 +1,31 @@
 package service;
 
+import dataaccess.AuthDAO;
 import dataaccess.DataAccessException;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 import service.request.LoginRequest;
 import service.request.LogoutRequest;
 import service.request.RegisterRequest;
 import service.result.LoginResult;
-import service.result.LogoutResult;
 import service.result.RegisterResult;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 class UserServiceTest {
     private RegisterRequest registerReq;
     private RegisterResult registerRes;
     private LoginRequest loginReq;
-    private LoginResult loginRes;
     private LogoutRequest logoutReq;
-    private LogoutResult logoutRes;
 
     @BeforeEach
     void setUp() {
-        // register
         registerReq = new RegisterRequest("user","pass","email");
         registerRes = new RegisterResult("user", "123");
-        // login
         loginReq = new LoginRequest("user", "pass");
-        loginRes = new LoginResult("user","pass");
-        // logout
         logoutReq = new LogoutRequest("123");
-        logoutRes = new LogoutResult();
+    }
+
+    @AfterEach
+    void cleanUp() {
+        DatabaseService.ClearService();
     }
 
     @Test
@@ -86,6 +79,25 @@ class UserServiceTest {
     }
 
     @Test
-    void logoutService() {
+    void logoutServiceSuccess() {
+        try {
+            RegisterResult authData = UserService.RegisterService(registerReq);
+            UserService.LogoutService(new LogoutRequest(authData.getAuthToken()));
+            AuthDAO authDB = new AuthDAO();
+            Assertions.assertThrows(DataAccessException.class, () -> authDB.getAuth(authData.getAuthToken()));
+        } catch(DataAccessException e) {
+            Assertions.fail();
+        }
+    }
+
+    @Test
+    void logoutServiceUnauthorized() {
+        try {
+            UserService.RegisterService(registerReq);
+            LogoutRequest request = new LogoutRequest(logoutReq.getAuthToken());
+            Assertions.assertThrows(DataAccessException.class, () -> UserService.LogoutService(request));
+        } catch(DataAccessException e) {
+            Assertions.fail();
+        }
     }
 }
