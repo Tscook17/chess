@@ -213,13 +213,20 @@ public class ChessGame {
                 // if not null and not on the same team, check move list for if a move kills king
                 if (piece != null && piece.getTeamColor() != teamColor) {
                     Collection<ChessMove> moveList = piece.pieceMoves(chessBoard, new ChessPosition(i,j));
-                    for (ChessMove move : moveList) {
-                        // if move kills king, return check true
-                        if (move.getEndPosition().equals(position)) {
-                            return true;
-                        }
+                    if(isKillsPiece(moveList, position)) {
+                        return true;
                     }
                 }
+            }
+        }
+        return false;
+    }
+
+    private boolean isKillsPiece(Collection<ChessMove> moveList, ChessPosition position) {
+        for (ChessMove move : moveList) {
+            // if move kills king, return check true
+            if (move.getEndPosition().equals(position)) {
+                return true;
             }
         }
         return false;
@@ -311,59 +318,51 @@ public class ChessGame {
         int posRow = position.getRow();
         int posCol = position.getColumn();
 
-        if ((posRow == 1 || posRow == 8) && posCol == 5) {
-            if (checkQueenSide) {
-                // check if queen side castle available
-                if ((chessBoard.getPiece(new ChessPosition(posRow, posCol - 1)) == null) &&
-                        (chessBoard.getPiece(new ChessPosition(posRow, posCol - 2)) == null) &&
-                        (chessBoard.getPiece(new ChessPosition(posRow, posCol - 3)) == null) &&
-                        !isInCheck(goodColor)) {
-                    if (!inDanger(new ChessPosition(posRow, posCol - 2), goodColor) &&
-                        !inDanger(new ChessPosition(posRow, posCol - 1), goodColor)) {
-                        // check if previous moves on record
-                        if (!previousMoveList.isEmpty()) {
-                            for (ChessMove move : previousMoveList) {
-                                if (move.getStartPosition().equals(position) ||
-                                    move.getStartPosition().equals(new ChessPosition(posRow, posCol - 4))) {
-                                    return null;
-                                }
-                            }
-                            ChessMove toReturn = new ChessMove(position, new ChessPosition(posRow, posCol - 2));
-                            toReturn.setCastlingQueenSide(true);
-                            return toReturn;
-                        } else {
-                            ChessMove toReturn = new ChessMove(position, new ChessPosition(posRow, posCol - 2));
-                            toReturn.setCastlingQueenSide(true);
-                            return toReturn;
-                        }
+        if (checkQueenSide && (posRow == 1 || posRow == 8) && posCol == 5 &&
+             (chessBoard.getPiece(new ChessPosition(posRow, posCol - 1)) == null) &&
+             (chessBoard.getPiece(new ChessPosition(posRow, posCol - 2)) == null) &&
+             (chessBoard.getPiece(new ChessPosition(posRow, posCol - 3)) == null) &&
+             !isInCheck(goodColor) &&
+             !inDanger(new ChessPosition(posRow, posCol - 2), goodColor) &&
+             !inDanger(new ChessPosition(posRow, posCol - 1), goodColor)) {
+            // check if previous moves on record
+            if (!previousMoveList.isEmpty()) {
+                for (ChessMove move : previousMoveList) {
+                    if (move.getStartPosition().equals(position) ||
+                        move.getStartPosition().equals(new ChessPosition(posRow, posCol - 4))) {
+                        return null;
                     }
                 }
-
-                // check if king side castle available
+                ChessMove toReturn = new ChessMove(position, new ChessPosition(posRow, posCol - 2));
+                toReturn.setCastlingQueenSide(true);
+                return toReturn;
             } else {
-                if ((chessBoard.getPiece(new ChessPosition(posRow, posCol + 1)) == null) &&
-                        (chessBoard.getPiece(new ChessPosition(posRow, posCol + 2)) == null) &&
-                        !isInCheck(goodColor)) {
-                    if (!inDanger(new ChessPosition(posRow, posCol + 2), goodColor) &&
-                        !inDanger(new ChessPosition(posRow, posCol + 1), goodColor)) {
-                        // check if previous moves on record
-                        if (!previousMoveList.isEmpty()) {
-                            for (ChessMove move : previousMoveList) {
-                                if (move.getStartPosition().equals(position) ||
-                                    move.getStartPosition().equals(new ChessPosition(posRow, posCol + 3))) {
-                                    return null;
-                                }
-                            }
-                            ChessMove toReturn = new ChessMove(position, new ChessPosition(posRow, posCol + 2));
-                            toReturn.setCastlingQueenSide(true);
-                            return toReturn;
-                        } else {
-                            ChessMove toReturn = new ChessMove(position, new ChessPosition(posRow, posCol + 2));
-                            toReturn.setCastlingQueenSide(true);
-                            return toReturn;
-                        }
+                ChessMove toReturn = new ChessMove(position, new ChessPosition(posRow, posCol - 2));
+                toReturn.setCastlingQueenSide(true);
+                return toReturn;
+            }
+            // check if king side castle available
+        } else if ((posRow == 1 || posRow == 8) && posCol == 5 &&
+            (chessBoard.getPiece(new ChessPosition(posRow, posCol + 1)) == null) &&
+            (chessBoard.getPiece(new ChessPosition(posRow, posCol + 2)) == null) &&
+            !isInCheck(goodColor) &&
+            !inDanger(new ChessPosition(posRow, posCol + 2), goodColor) &&
+            !inDanger(new ChessPosition(posRow, posCol + 1), goodColor)) {
+            // check if previous moves on record
+            if (!previousMoveList.isEmpty()) {
+                for (ChessMove move : previousMoveList) {
+                    if (move.getStartPosition().equals(position) ||
+                        move.getStartPosition().equals(new ChessPosition(posRow, posCol + 3))) {
+                        return null;
                     }
                 }
+                ChessMove toReturn = new ChessMove(position, new ChessPosition(posRow, posCol + 2));
+                toReturn.setCastlingQueenSide(true);
+                return toReturn;
+            } else {
+                ChessMove toReturn = new ChessMove(position, new ChessPosition(posRow, posCol + 2));
+                toReturn.setCastlingQueenSide(true);
+                return toReturn;
             }
         }
         return null;
