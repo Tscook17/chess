@@ -7,7 +7,7 @@ import service.result.ClearResult;
 
 public class DatabaseService {
 
-    public static ClearResult ClearService() {
+    public static ClearResult clearService() {
         AuthDAO a = new AuthDAO();
         a.clear();
         GameDAO g = new GameDAO();

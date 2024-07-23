@@ -1,6 +1,4 @@
-package chess.helperClasses;
-
-import chess.*;
+package chess;
 
 import java.util.Collection;
 import java.util.ArrayList;

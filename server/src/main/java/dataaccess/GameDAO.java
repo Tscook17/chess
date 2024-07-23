@@ -1,29 +1,29 @@
 package dataaccess;
 
 import chess.ChessGame;
-import dataaccess.DAOInterfaces.GameDAOInterface;
+import dataaccess.daointerfaces.GameDAOInterface;
 import model.GameData;
 
 import java.util.HashMap;
 import java.util.Map;
 
 public class GameDAO implements GameDAOInterface {
-    private static Map<Integer, GameData> GameDataDB = new HashMap<>();
+    private static Map<Integer, GameData> gameDataDB = new HashMap<>();
     private static int currentGameID = 1;
 
     @Override
     public int createGame(String gameName) {
         GameData newGame =
                 new GameData(currentGameID, null, null, gameName, new ChessGame());
-        GameDataDB.put(currentGameID, newGame);
+        gameDataDB.put(currentGameID, newGame);
 
         return currentGameID++;
     }
 
     @Override
     public GameData getGame(int gameID) throws DataAccessException {
-        if (GameDataDB.containsKey(gameID)) {
-            return GameDataDB.get(gameID);
+        if (gameDataDB.containsKey(gameID)) {
+            return gameDataDB.get(gameID);
         } else {
             throw new DataAccessException("Error: bad request", 400);
         }
@@ -31,7 +31,7 @@ public class GameDAO implements GameDAOInterface {
 
     @Override
     public GameData[] listGames() {
-        return GameDataDB.values().toArray(new GameData[0]);
+        return gameDataDB.values().toArray(new GameData[0]);
     }
 
     @Override
@@ -47,7 +47,7 @@ public class GameDAO implements GameDAOInterface {
                 newGame =
                         new GameData(gameID, oldGame.whiteUsername(), username, oldGame.gameName(), oldGame.game());
             }
-            GameDataDB.put(gameID, newGame);
+            gameDataDB.put(gameID, newGame);
         } else {
             throw new DataAccessException("Error: already taken", 403);
         }
@@ -55,7 +55,7 @@ public class GameDAO implements GameDAOInterface {
 
     @Override
     public void clear() {
-        GameDataDB.clear();
+        gameDataDB.clear();
     }
 
     private boolean isPlayerColorFree(GameData game, String playerColor) throws DataAccessException {

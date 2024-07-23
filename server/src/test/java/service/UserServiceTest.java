@@ -25,13 +25,13 @@ class UserServiceTest {
 
     @AfterEach
     void cleanUp() {
-        DatabaseService.ClearService();
+        DatabaseService.clearService();
     }
 
     @Test
     void registerServiceSuccess() {
         try {
-            RegisterResult result = UserService.RegisterService(registerReq);
+            RegisterResult result = UserService.registerService(registerReq);
             Assertions.assertEquals(result.getUsername(), registerRes.getUsername());
             Assertions.assertNotNull(result.getAuthToken());
         } catch(DataAccessException e) {
@@ -42,24 +42,24 @@ class UserServiceTest {
     @Test
     void registerServiceBadRequest() {
         registerReq.setEmail(null);
-        Assertions.assertThrows(DataAccessException.class, () -> UserService.RegisterService(registerReq));
+        Assertions.assertThrows(DataAccessException.class, () -> UserService.registerService(registerReq));
     }
 
     @Test
     void registerServiceAlreadyTaken() {
         try {
-            UserService.RegisterService(registerReq);
+            UserService.registerService(registerReq);
         } catch(DataAccessException e) {
             Assertions.fail();
         }
-        Assertions.assertThrows(DataAccessException.class, () -> UserService.RegisterService(registerReq));
+        Assertions.assertThrows(DataAccessException.class, () -> UserService.registerService(registerReq));
     }
 
     @Test
     void loginServiceSuccess() {
         try {
-            UserService.RegisterService(registerReq);
-            LoginResult result = UserService.LoginService(loginReq);
+            UserService.registerService(registerReq);
+            LoginResult result = UserService.loginService(loginReq);
             Assertions.assertEquals(result.getUsername(), loginReq.getUsername());
             Assertions.assertNotNull(result.getAuthToken());
         } catch(DataAccessException e) {
@@ -70,9 +70,9 @@ class UserServiceTest {
     @Test
     void loginServiceUnauthorized() {
         try {
-            UserService.RegisterService(registerReq);
+            UserService.registerService(registerReq);
             loginReq.setPassword("000");
-            Assertions.assertThrows(DataAccessException.class, () -> UserService.LoginService(loginReq));
+            Assertions.assertThrows(DataAccessException.class, () -> UserService.loginService(loginReq));
         } catch(DataAccessException e) {
             Assertions.fail();
         }
@@ -81,8 +81,8 @@ class UserServiceTest {
     @Test
     void logoutServiceSuccess() {
         try {
-            RegisterResult authData = UserService.RegisterService(registerReq);
-            UserService.LogoutService(new LogoutRequest(authData.getAuthToken()));
+            RegisterResult authData = UserService.registerService(registerReq);
+            UserService.logoutService(new LogoutRequest(authData.getAuthToken()));
             AuthDAO authDB = new AuthDAO();
             Assertions.assertThrows(DataAccessException.class, () -> authDB.getAuth(authData.getAuthToken()));
         } catch(DataAccessException e) {
@@ -93,9 +93,9 @@ class UserServiceTest {
     @Test
     void logoutServiceUnauthorized() {
         try {
-            UserService.RegisterService(registerReq);
+            UserService.registerService(registerReq);
             LogoutRequest request = new LogoutRequest(logoutReq.getAuthToken());
-            Assertions.assertThrows(DataAccessException.class, () -> UserService.LogoutService(request));
+            Assertions.assertThrows(DataAccessException.class, () -> UserService.logoutService(request));
         } catch(DataAccessException e) {
             Assertions.fail();
         }

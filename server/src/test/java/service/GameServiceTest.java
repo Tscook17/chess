@@ -46,16 +46,16 @@ class GameServiceTest {
 
     @AfterEach
     void cleanUp() {
-        DatabaseService.ClearService();
+        DatabaseService.clearService();
     }
 
     @Test
     void createGameServiceSuccess() {
         try {
             RegisterResult registerRes =
-                    UserService.RegisterService(new RegisterRequest("user", "pass", "email"));
+                    UserService.registerService(new RegisterRequest("user", "pass", "email"));
             createReqGame1.setAuthToken(registerRes.getAuthToken());
-            Assertions.assertTrue(GameService.CreateGameService(createReqGame1).getGameID() > 0);
+            Assertions.assertTrue(GameService.createGameService(createReqGame1).getGameID() > 0);
         } catch(DataAccessException e) {
             Assertions.fail();
         }
@@ -64,24 +64,24 @@ class GameServiceTest {
     @Test
     void createGameServiceBadRequest() {
         createReqGame1.setAuthToken(null);
-        Assertions.assertThrows(DataAccessException.class, () -> GameService.CreateGameService(createReqGame1));
+        Assertions.assertThrows(DataAccessException.class, () -> GameService.createGameService(createReqGame1));
     }
 
     @Test
     void createGameServiceUnauthorized() {
-            Assertions.assertThrows(DataAccessException.class, () -> GameService.CreateGameService(createReqGame1));
+            Assertions.assertThrows(DataAccessException.class, () -> GameService.createGameService(createReqGame1));
     }
 
     @Test
     void joinGameServiceSuccess() {
         try {
             RegisterResult registerRes =
-                    UserService.RegisterService(new RegisterRequest("user", "pass", "email"));
+                    UserService.registerService(new RegisterRequest("user", "pass", "email"));
             createReqGame1.setAuthToken(registerRes.getAuthToken());
-            CreateGameResult gameData = GameService.CreateGameService(createReqGame1);
+            CreateGameResult gameData = GameService.createGameService(createReqGame1);
             joinReq.setAuthToken(registerRes.getAuthToken());
             joinReq.setGameID(gameData.getGameID());
-            GameService.JoinGameService(joinReq);
+            GameService.joinGameService(joinReq);
             String username = new AuthDAO().getAuth(registerRes.getAuthToken()).username();
             assertEquals(new GameDAO().getGame(gameData.getGameID()).whiteUsername(), username);
         } catch(DataAccessException e) {
@@ -93,11 +93,11 @@ class GameServiceTest {
     void joinGameServiceBadRequest() {
         try {
             RegisterResult registerRes =
-                    UserService.RegisterService(new RegisterRequest("user", "pass", "email"));
+                    UserService.registerService(new RegisterRequest("user", "pass", "email"));
             createReqGame1.setAuthToken(registerRes.getAuthToken());
-            GameService.CreateGameService(createReqGame1);
+            GameService.createGameService(createReqGame1);
             joinReq.setAuthToken(registerRes.getAuthToken());
-            Assertions.assertThrows(DataAccessException.class, () -> GameService.JoinGameService(joinReq));
+            Assertions.assertThrows(DataAccessException.class, () -> GameService.joinGameService(joinReq));
         } catch(DataAccessException e) {
             Assertions.fail();
         }
@@ -107,10 +107,10 @@ class GameServiceTest {
     void joinGameServiceUnauthorized() {
         try {
             RegisterResult registerRes =
-                    UserService.RegisterService(new RegisterRequest("user", "pass", "email"));
+                    UserService.registerService(new RegisterRequest("user", "pass", "email"));
             createReqGame1.setAuthToken(registerRes.getAuthToken());
-            GameService.CreateGameService(createReqGame1);
-            Assertions.assertThrows(DataAccessException.class, () -> GameService.JoinGameService(joinReq));
+            GameService.createGameService(createReqGame1);
+            Assertions.assertThrows(DataAccessException.class, () -> GameService.joinGameService(joinReq));
         } catch(DataAccessException e) {
             Assertions.fail();
         }
@@ -120,13 +120,13 @@ class GameServiceTest {
     void joinGameServiceAlreadyTaken() {
         try {
             RegisterResult registerRes =
-                    UserService.RegisterService(new RegisterRequest("user", "pass", "email"));
+                    UserService.registerService(new RegisterRequest("user", "pass", "email"));
             createReqGame1.setAuthToken(registerRes.getAuthToken());
-            CreateGameResult gameData = GameService.CreateGameService(createReqGame1);
+            CreateGameResult gameData = GameService.createGameService(createReqGame1);
             joinReq.setAuthToken(registerRes.getAuthToken());
             joinReq.setGameID(gameData.getGameID());
-            GameService.JoinGameService(joinReq);
-            Assertions.assertThrows(DataAccessException.class,() -> GameService.JoinGameService(joinReq));
+            GameService.joinGameService(joinReq);
+            Assertions.assertThrows(DataAccessException.class,() -> GameService.joinGameService(joinReq));
         } catch(DataAccessException e) {
             Assertions.fail();
         }
@@ -136,11 +136,11 @@ class GameServiceTest {
     void listGamesServiceSuccess() {
         try {
             RegisterResult registerRes =
-                    UserService.RegisterService(new RegisterRequest("user", "pass", "email"));
+                    UserService.registerService(new RegisterRequest("user", "pass", "email"));
             createReqGame1.setAuthToken(registerRes.getAuthToken());
-            GameService.CreateGameService(createReqGame1);
+            GameService.createGameService(createReqGame1);
             listReq.setAuthToken(registerRes.getAuthToken());
-            Assertions.assertTrue(GameService.ListGamesService(listReq).getGames().length > 0);
+            Assertions.assertTrue(GameService.listGamesService(listReq).getGames().length > 0);
         } catch(DataAccessException e) {
             Assertions.fail();
         }
@@ -150,10 +150,10 @@ class GameServiceTest {
     void listGamesServiceUnauthorized() {
         try {
             RegisterResult registerRes =
-                    UserService.RegisterService(new RegisterRequest("user", "pass", "email"));
+                    UserService.registerService(new RegisterRequest("user", "pass", "email"));
             createReqGame1.setAuthToken(registerRes.getAuthToken());
-            GameService.CreateGameService(createReqGame1);
-            Assertions.assertThrows(DataAccessException.class, () -> GameService.ListGamesService(listReq));
+            GameService.createGameService(createReqGame1);
+            Assertions.assertThrows(DataAccessException.class, () -> GameService.listGamesService(listReq));
         } catch(DataAccessException e) {
             Assertions.fail();
         }

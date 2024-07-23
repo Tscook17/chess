@@ -10,11 +10,9 @@ import model.UserData;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.*;
-
 class DatabaseServiceTest {
     @Test
-    void ClearServiceTest() throws Exception {
+    void clearServiceTest() throws Exception {
         // fill user db
         UserDAO userDB = new UserDAO();
         userDB.createUser(new UserData("user1","pass1","email1"));
@@ -29,7 +27,7 @@ class DatabaseServiceTest {
         gameDB.createGame("game2");
 
         // clear db's
-        DatabaseService.ClearService();
+        DatabaseService.clearService();
 
         // check
         Assertions.assertNull(userDB.getUser("user1"));

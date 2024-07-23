@@ -3,8 +3,6 @@ package server;
 import com.google.gson.Gson;
 import dataaccess.DataAccessException;
 import service.DatabaseService;
-import service.GameService;
-import service.UserService;
 import service.request.*;
 import service.result.*;
 import spark.Request;
@@ -18,11 +16,11 @@ import static service.UserService.*;
 
 public class Handler {
 
-    public static Object HandleRegister(Request req, Response res) {
+    public static Object handleRegister(Request req, Response res) {
         Gson g = new Gson();
         RegisterRequest request = g.fromJson(req.body(),RegisterRequest.class);
         try {
-            RegisterResult result = RegisterService(request);
+            RegisterResult result = registerService(request);
             res.status(200);
             res.body(g.toJson(result));
             return res.body();
@@ -35,11 +33,11 @@ public class Handler {
         }
     }
 
-    public static Object HandleLogin(Request req, Response res) {
+    public static Object handleLogin(Request req, Response res) {
         Gson g = new Gson();
         LoginRequest request = g.fromJson(req.body(),LoginRequest.class);
         try {
-            LoginResult result = LoginService(request);
+            LoginResult result = loginService(request);
             res.status(200);
             res.body(g.toJson(result));
             return res.body();
@@ -52,11 +50,11 @@ public class Handler {
         }
     }
 
-    public static Object HandleLogout(Request req, Response res) {
+    public static Object handleLogout(Request req, Response res) {
         Gson g = new Gson();
         LogoutRequest request = new LogoutRequest(req.headers("authorization"));
         try {
-            LogoutResult result = LogoutService(request);
+            LogoutResult result = logoutService(request);
             res.status(200);
             res.body(g.toJson(result));
             return res.body();
@@ -69,11 +67,11 @@ public class Handler {
         }
     }
 
-    public static Object HandleListGames(Request req, Response res) {
+    public static Object handleListGames(Request req, Response res) {
         Gson g = new Gson();
         ListGamesRequest request = new ListGamesRequest(req.headers("authorization"));
         try {
-            ListGamesResult result = ListGamesService(request);
+            ListGamesResult result = listGamesService(request);
             res.status(200);
             res.body(g.toJson(result));
             return res.body();
@@ -86,12 +84,12 @@ public class Handler {
         }
     }
 
-    public static Object HandleCreateGame(Request req, Response res) {
+    public static Object handleCreateGame(Request req, Response res) {
         Gson g = new Gson();
         CreateGameRequest request = g.fromJson(req.body(),CreateGameRequest.class);
         request.setAuthToken(req.headers("authorization"));
         try {
-            CreateGameResult result = CreateGameService(request);
+            CreateGameResult result = createGameService(request);
             res.status(200);
             res.body(g.toJson(result));
             return res.body();
@@ -104,12 +102,12 @@ public class Handler {
         }
     }
 
-    public static Object HandleJoinGame(Request req, Response res) {
+    public static Object handleJoinGame(Request req, Response res) {
         Gson g = new Gson();
         JoinGameRequest request = g.fromJson(req.body(),JoinGameRequest.class);
         request.setAuthToken(req.headers("authorization"));
         try {
-            JoinGameResult result = JoinGameService(request);
+            JoinGameResult result = joinGameService(request);
             res.status(200);
             res.body("{}");
             return res.body();
@@ -122,8 +120,8 @@ public class Handler {
         }
     }
 
-    public static Object HandleClear(Request req, Response res) {
-        DatabaseService.ClearService();
+    public static Object handleClear(Request req, Response res) {
+        DatabaseService.clearService();
         res.status(200);
         res.body("{}");
         return res.body();

@@ -1,23 +1,23 @@
 package dataaccess;
 
-import dataaccess.DAOInterfaces.AuthDAOInterface;
+import dataaccess.daointerfaces.AuthDAOInterface;
 import model.AuthData;
 
 import java.util.HashMap;
 import java.util.Map;
 
 public class AuthDAO implements AuthDAOInterface {
-    private static Map<String, String> AuthDataDB = new HashMap<>();
+    private static Map<String, String> authDataDB = new HashMap<>();
 
     @Override
     public void createAuth(AuthData authData) {
-        AuthDataDB.put(authData.authToken(), authData.username());
+        authDataDB.put(authData.authToken(), authData.username());
     }
 
     @Override
     public AuthData getAuth(String authToken) throws DataAccessException {
-        if (AuthDataDB.containsKey(authToken)) {
-            return new AuthData(authToken, AuthDataDB.get(authToken));
+        if (authDataDB.containsKey(authToken)) {
+            return new AuthData(authToken, authDataDB.get(authToken));
         } else {
             throw new DataAccessException("Error: unauthorized", 401);
         }
@@ -25,8 +25,8 @@ public class AuthDAO implements AuthDAOInterface {
 
     @Override
     public void deleteAuth(String authToken) throws DataAccessException {
-        if (AuthDataDB.containsKey(authToken)) {
-            AuthDataDB.remove(authToken);
+        if (authDataDB.containsKey(authToken)) {
+            authDataDB.remove(authToken);
         } else {
             throw new DataAccessException("Error: unauthorized", 401);
         }
@@ -34,6 +34,6 @@ public class AuthDAO implements AuthDAOInterface {
 
     @Override
     public void clear() {
-        AuthDataDB.clear();
+        authDataDB.clear();
     }
 }
