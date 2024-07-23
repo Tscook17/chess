@@ -265,7 +265,8 @@ public class MoveCalculator {
                 }
             }
             // check if at start
-            if (positionRow == 2 && pieceAtLocation(positionRow + 1, positionCol) == Options.EMPTY && pieceAtLocation(positionRow + 2, positionCol) == Options.EMPTY) {
+            if (positionRow == 2 && pieceAtLocation(positionRow + 1, positionCol) == Options.EMPTY &&
+                pieceAtLocation(positionRow + 2, positionCol) == Options.EMPTY) {
                 moveCollection.add(new ChessMove(myPosition,new ChessPosition(positionRow + 2,positionCol)));
             }
             // if black
@@ -304,7 +305,8 @@ public class MoveCalculator {
                 }
             }
             // check if at start
-            if (positionRow == 7 && pieceAtLocation(positionRow - 1, positionCol) == Options.EMPTY && pieceAtLocation(positionRow - 2, positionCol) == Options.EMPTY) {
+            if (positionRow == 7 && pieceAtLocation(positionRow - 1, positionCol) == Options.EMPTY &&
+                pieceAtLocation(positionRow - 2, positionCol) == Options.EMPTY) {
                 moveCollection.add(new ChessMove(myPosition,new ChessPosition(positionRow - 2,positionCol)));
             }
         }
@@ -315,7 +317,7 @@ public class MoveCalculator {
     private boolean isOnBoard(int row, int col) {
         if (row > 8 || row < 1) {
             return false;
-        } else return !(col > 8 || col < 1);
+        } else { return !(col > 8 || col < 1); }
     }
 
     // returns the contents of the proposed position on the board

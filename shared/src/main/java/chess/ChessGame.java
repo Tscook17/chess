@@ -156,7 +156,8 @@ public class ChessGame {
         // add and erase rook if castling queen side
         if (move.isCastlingQueenSide()) {
             // add rook
-            ChessPiece queenRook = chessBoard.getPiece(new ChessPosition(move.getEndPosition().getRow(),move.getEndPosition().getColumn()-2));
+            ChessPiece queenRook =
+                    chessBoard.getPiece(new ChessPosition(move.getEndPosition().getRow(),move.getEndPosition().getColumn()-2));
             chessBoard.addPiece(new ChessPosition(move.getEndPosition().getRow(),move.getEndPosition().getColumn()+1),queenRook);
             // erase rook
             chessBoard.addPiece(new ChessPosition(move.getEndPosition().getRow(),move.getEndPosition().getColumn()-2),null);
@@ -164,7 +165,8 @@ public class ChessGame {
         // add and erase rook if castling king side
         if (move.isCastlingKingSide()) {
             // add rook
-            ChessPiece kingRook = chessBoard.getPiece(new ChessPosition(move.getEndPosition().getRow(),move.getEndPosition().getColumn()+1));
+            ChessPiece kingRook =
+                    chessBoard.getPiece(new ChessPosition(move.getEndPosition().getRow(),move.getEndPosition().getColumn()+1));
             chessBoard.addPiece(new ChessPosition(move.getEndPosition().getRow(),move.getEndPosition().getColumn()-1),kingRook);
             // erase rook
             chessBoard.addPiece(new ChessPosition(move.getEndPosition().getRow(),move.getEndPosition().getColumn()+1),null);
@@ -316,11 +318,13 @@ public class ChessGame {
                         (chessBoard.getPiece(new ChessPosition(posRow, posCol - 2)) == null) &&
                         (chessBoard.getPiece(new ChessPosition(posRow, posCol - 3)) == null) &&
                         !isInCheck(goodColor)) {
-                    if (!inDanger(new ChessPosition(posRow, posCol - 2), goodColor) && !inDanger(new ChessPosition(posRow, posCol - 1), goodColor)) {
+                    if (!inDanger(new ChessPosition(posRow, posCol - 2), goodColor) &&
+                        !inDanger(new ChessPosition(posRow, posCol - 1), goodColor)) {
                         // check if previous moves on record
                         if (!previousMoveList.isEmpty()) {
                             for (ChessMove move : previousMoveList) {
-                                if (move.getStartPosition().equals(position) || move.getStartPosition().equals(new ChessPosition(posRow, posCol - 4))) {
+                                if (move.getStartPosition().equals(position) ||
+                                    move.getStartPosition().equals(new ChessPosition(posRow, posCol - 4))) {
                                     return null;
                                 }
                             }
@@ -340,11 +344,13 @@ public class ChessGame {
                 if ((chessBoard.getPiece(new ChessPosition(posRow, posCol + 1)) == null) &&
                         (chessBoard.getPiece(new ChessPosition(posRow, posCol + 2)) == null) &&
                         !isInCheck(goodColor)) {
-                    if (!inDanger(new ChessPosition(posRow, posCol + 2), goodColor) && !inDanger(new ChessPosition(posRow, posCol + 1), goodColor)) {
+                    if (!inDanger(new ChessPosition(posRow, posCol + 2), goodColor) &&
+                        !inDanger(new ChessPosition(posRow, posCol + 1), goodColor)) {
                         // check if previous moves on record
                         if (!previousMoveList.isEmpty()) {
                             for (ChessMove move : previousMoveList) {
-                                if (move.getStartPosition().equals(position) || move.getStartPosition().equals(new ChessPosition(posRow, posCol + 3))) {
+                                if (move.getStartPosition().equals(position) ||
+                                    move.getStartPosition().equals(new ChessPosition(posRow, posCol + 3))) {
                                     return null;
                                 }
                             }

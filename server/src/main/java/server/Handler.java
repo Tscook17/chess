@@ -26,9 +26,7 @@ public class Handler {
             return res.body();
         } catch(DataAccessException e) {
             res.status(e.getErrorCode());
-            Map<String, String> pair = new HashMap<String, String>();
-            pair.put("message", e.getMessage());
-            res.body(g.toJson(pair));
+            res.body(g.toJson(handleError(e)));
             return res.body();
         }
     }
@@ -43,9 +41,7 @@ public class Handler {
             return res.body();
         } catch(DataAccessException e) {
             res.status(e.getErrorCode());
-            Map<String, String> pair = new HashMap<String, String>();
-            pair.put("message", e.getMessage());
-            res.body(g.toJson(pair));
+            res.body(g.toJson(handleError(e)));
             return res.body();
         }
     }
@@ -60,9 +56,7 @@ public class Handler {
             return res.body();
         } catch(DataAccessException e) {
             res.status(e.getErrorCode());
-            Map<String, String> pair = new HashMap<String, String>();
-            pair.put("message", e.getMessage());
-            res.body(g.toJson(pair));
+            res.body(g.toJson(handleError(e)));
             return res.body();
         }
     }
@@ -77,9 +71,7 @@ public class Handler {
             return res.body();
         } catch(DataAccessException e) {
             res.status(e.getErrorCode());
-            Map<String, String> pair = new HashMap<String, String>();
-            pair.put("message", e.getMessage());
-            res.body(g.toJson(pair));
+            res.body(g.toJson(handleError(e)));
             return res.body();
         }
     }
@@ -95,9 +87,7 @@ public class Handler {
             return res.body();
         } catch(DataAccessException e) {
             res.status(e.getErrorCode());
-            Map<String, String> pair = new HashMap<String, String>();
-            pair.put("message", e.getMessage());
-            res.body(g.toJson(pair));
+            res.body(g.toJson(handleError(e)));
             return res.body();
         }
     }
@@ -113,9 +103,7 @@ public class Handler {
             return res.body();
         } catch(DataAccessException e) {
             res.status(e.getErrorCode());
-            Map<String, String> pair = new HashMap<String, String>();
-            pair.put("message", e.getMessage());
-            res.body(g.toJson(pair));
+            res.body(g.toJson(handleError(e)));
             return res.body();
         }
     }
@@ -125,5 +113,11 @@ public class Handler {
         res.status(200);
         res.body("{}");
         return res.body();
+    }
+
+    private static Map<String, String> handleError(DataAccessException e) {
+        Map<String, String> pair = new HashMap<String, String>();
+        pair.put("message", e.getMessage());
+        return pair;
     }
 }
