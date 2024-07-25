@@ -7,6 +7,7 @@ import service.request.LoginRequest;
 import service.request.LogoutRequest;
 import service.request.RegisterRequest;
 import service.result.LoginResult;
+import service.result.LogoutResult;
 import service.result.RegisterResult;
 
 class UserServiceTest {
@@ -38,50 +39,46 @@ class UserServiceTest {
     @Test
     void registerServiceBadRequest() {
         registerReq.setEmail(null);
-        Assertions.assertThrows(DataAccessException.class, () -> UserService.registerService(registerReq));
+        RegisterResult result = UserService.registerService(registerReq);
+        Assertions.assertEquals(400,result.getErrorCode());
     }
 
     @Test
     void registerServiceAlreadyTaken() {
         UserService.registerService(registerReq);
-        Assertions.assertThrows(DataAccessException.class, () -> UserService.registerService(registerReq));
+        RegisterResult result = UserService.registerService(registerReq);
+        Assertions.assertEquals(403,result.getErrorCode());
     }
 
-//    @Test
-//    void loginServiceSuccess() {
-//        try {
-//            UserService.registerService(registerReq);
-//            LoginResult result = UserService.loginService(loginReq);
-//            Assertions.assertEquals(result.getUsername(), loginReq.getUsername());
-//            Assertions.assertNotNull(result.getAuthToken());
-//        } catch(DataAccessException e) {
-//            Assertions.fail();
-//        }
-//    }
+    @Test
+    void loginServiceSuccess() {
+        UserService.registerService(registerReq);
+        LoginResult result = UserService.loginService(loginReq);
+        Assertions.assertEquals(result.getUsername(), loginReq.getUsername());
+        Assertions.assertNotNull(result.getAuthToken());
+    }
 
     @Test
     void loginServiceUnauthorized() {
         UserService.registerService(registerReq);
         loginReq.setPassword("000");
-        Assertions.assertThrows(DataAccessException.class, () -> UserService.loginService(loginReq));
+        LoginResult result = UserService.loginService(loginReq);
+        Assertions.assertEquals(401,result.getErrorCode());
     }
 
-//    @Test
-//    void logoutServiceSuccess() {
-//        RegisterResult authData = UserService.registerService(registerReq);
-//        try {
-//            UserService.logoutService(new LogoutRequest(authData.getAuthToken()));
-//        } catch(DataAccessException e) {
-//            Assertions.fail();
-//        }
-//        AuthDAO authDB = new AuthDAO();
-//        Assertions.assertThrows(DataAccessException.class, () -> authDB.getAuth(authData.getAuthToken()));
-//    }
+    @Test
+    void logoutServiceSuccess() {
+        RegisterResult authData = UserService.registerService(registerReq);
+        UserService.logoutService(new LogoutRequest(authData.getAuthToken()));
+        AuthDAO authDB = new AuthDAO();
+        Assertions.assertThrows(DataAccessException.class, () -> authDB.getAuth(authData.getAuthToken()));
+    }
 
     @Test
     void logoutServiceUnauthorized() {
         UserService.registerService(registerReq);
         LogoutRequest request = new LogoutRequest(logoutReq.getAuthToken());
-        Assertions.assertThrows(DataAccessException.class, () -> UserService.logoutService(request));
+        LogoutResult result = UserService.logoutService(request);
+        Assertions.assertEquals(401,result.getErrorCode());
     }
 }

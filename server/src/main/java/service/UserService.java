@@ -12,7 +12,6 @@ import service.request.RequestBase;
 import service.result.LoginResult;
 import service.result.LogoutResult;
 import service.result.RegisterResult;
-import service.result.ResultBase;
 
 import java.util.UUID;
 
@@ -22,11 +21,11 @@ public class UserService {
         return registerServiceRunner((RegisterRequest) requestBase);
     }
 
-    public static ResultBase loginService(RequestBase requestBase) {
+    public static LoginResult loginService(RequestBase requestBase) {
         return loginServiceRunner((LoginRequest) requestBase);
     }
 
-    public static ResultBase logoutService(RequestBase requestBase) {
+    public static LogoutResult logoutService(RequestBase requestBase) {
         return logoutServiceRunner((LogoutRequest) requestBase);
     }
 

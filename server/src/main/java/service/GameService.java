@@ -8,15 +8,15 @@ import service.request.*;
 import service.result.*;
 
 public class GameService {
-    public static ResultBase createGameService(RequestBase requestBase) {
+    public static CreateGameResult createGameService(RequestBase requestBase) {
         return createGameServiceRunner((CreateGameRequest) requestBase);
     }
 
-    public static ResultBase joinGameService(RequestBase requestBase) {
+    public static JoinGameResult joinGameService(RequestBase requestBase) {
         return joinGameServiceRunner((JoinGameRequest) requestBase);
     }
 
-    public static ResultBase listGamesService(RequestBase requestBase) {
+    public static ListGamesResult listGamesService(RequestBase requestBase) {
         return listGamesServiceRunner((ListGamesRequest) requestBase);
     }
 

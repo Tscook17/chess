@@ -5,10 +5,9 @@ import dataaccess.GameDAO;
 import dataaccess.UserDAO;
 import service.request.RequestBase;
 import service.result.ClearResult;
-import service.result.ResultBase;
 
 public class DatabaseService {
-    public static ResultBase clearService(RequestBase requestBase) {
+    public static ClearResult clearService(RequestBase requestBase) {
         return clearService();
     }
 
