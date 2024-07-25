@@ -15,41 +15,41 @@ import java.util.function.Function;
 public class Handler {
 
     public static Object handleRegister(Request req, Response res) {
-        return handleServiceCall(req, res, new RegisterRequest(), UserService::registerService);
+        return handleServiceCall(req, res, new RegisterRequest(), RegisterRequest.class, UserService::registerService);
     }
 
     public static Object handleLogin(Request req, Response res) {
-        return handleServiceCall(req, res, new LoginRequest(), UserService::loginService);
+        return handleServiceCall(req, res, new LoginRequest(), LoginRequest.class, UserService::loginService);
     }
 
     public static Object handleLogout(Request req, Response res) {
-        return handleServiceCall(req, res, new LogoutRequest(), UserService::logoutService);
+        return handleServiceCall(req, res, new LogoutRequest(), LogoutRequest.class, UserService::logoutService);
     }
 
     public static Object handleListGames(Request req, Response res) {
-        return handleServiceCall(req, res, new ListGamesRequest(), GameService::listGamesService);
+        return handleServiceCall(req, res, new ListGamesRequest(), ListGamesRequest.class, GameService::listGamesService);
     }
 
     public static Object handleCreateGame(Request req, Response res) {
-        return handleServiceCall(req, res, new CreateGameRequest(), GameService::createGameService);
+        return handleServiceCall(req, res, new CreateGameRequest(), CreateGameRequest.class, GameService::createGameService);
     }
 
     public static Object handleJoinGame(Request req, Response res) {
-        return handleServiceCall(req, res, new JoinGameRequest(), GameService::joinGameService);
+        return handleServiceCall(req, res, new JoinGameRequest(), JoinGameRequest.class, GameService::joinGameService);
     }
 
     public static Object handleClear(Request req, Response res) {
-        return handleServiceCall(req, res, new RequestBase(), DatabaseService::clearService);
+        return handleServiceCall(req, res, new RequestBase(), RequestBase.class, DatabaseService::clearService);
     }
 
-    private static Object handleServiceCall(Request req, Response res, RequestBase request,
-                                            Function<RequestBase, ResultBase> func) {
+    private static <T extends RequestBase, G extends ResultBase> Object handleServiceCall(Request req, Response res,
+                                                                 T request, Class<T> requestType, Function<T, G> func) {
         Gson g = new Gson();
-        if (!req.body().isEmpty()) { request = g.fromJson(req.body(),request.getClass()); }
+        if (!req.body().isEmpty()) { request = g.fromJson(req.body(),requestType);}
         if (req.headers("authorization") != null) {
             request.setAuthToken(req.headers("authorization"));
         }
-        ResultBase result = func.apply(request);
+        G result = func.apply(request);
         if (result.isError()) {
             res.status(result.getErrorCode());
             res.body(g.toJson(result));

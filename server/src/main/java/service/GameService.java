@@ -8,19 +8,7 @@ import service.request.*;
 import service.result.*;
 
 public class GameService {
-    public static CreateGameResult createGameService(RequestBase requestBase) {
-        return createGameServiceRunner((CreateGameRequest) requestBase);
-    }
-
-    public static JoinGameResult joinGameService(RequestBase requestBase) {
-        return joinGameServiceRunner((JoinGameRequest) requestBase);
-    }
-
-    public static ListGamesResult listGamesService(RequestBase requestBase) {
-        return listGamesServiceRunner((ListGamesRequest) requestBase);
-    }
-
-    private static CreateGameResult createGameServiceRunner(CreateGameRequest req) {
+    public static CreateGameResult createGameService(CreateGameRequest req) {
         CreateGameResult response = new CreateGameResult();
         // check if good request
         if (req.isBadRequest()) {
@@ -40,7 +28,7 @@ public class GameService {
         return new CreateGameResult(gameDB.createGame(req.getGameName()));
     }
 
-    private static JoinGameResult joinGameServiceRunner(JoinGameRequest req) {
+    public static JoinGameResult joinGameService(JoinGameRequest req) {
         JoinGameResult response = new JoinGameResult();
         // check if good request
         if (req.isBadRequest()) {
@@ -62,7 +50,7 @@ public class GameService {
         return new JoinGameResult();
     }
 
-    private static ListGamesResult listGamesServiceRunner(ListGamesRequest req) {
+    public static ListGamesResult listGamesService(ListGamesRequest req) {
         ListGamesResult response = new ListGamesResult();
         // get authToken
         AuthDAO authDB = new AuthDAO();

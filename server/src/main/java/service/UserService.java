@@ -8,7 +8,6 @@ import model.UserData;
 import service.request.LoginRequest;
 import service.request.LogoutRequest;
 import service.request.RegisterRequest;
-import service.request.RequestBase;
 import service.result.LoginResult;
 import service.result.LogoutResult;
 import service.result.RegisterResult;
@@ -16,20 +15,7 @@ import service.result.RegisterResult;
 import java.util.UUID;
 
 public class UserService {
-
-    public static RegisterResult registerService(RequestBase requestBase) {
-        return registerServiceRunner((RegisterRequest) requestBase);
-    }
-
-    public static LoginResult loginService(RequestBase requestBase) {
-        return loginServiceRunner((LoginRequest) requestBase);
-    }
-
-    public static LogoutResult logoutService(RequestBase requestBase) {
-        return logoutServiceRunner((LogoutRequest) requestBase);
-    }
-
-    private static RegisterResult registerServiceRunner(RegisterRequest req) {
+    public static RegisterResult registerService(RegisterRequest req) {
         RegisterResult response = new RegisterResult();
         // check if good request
         if (req.isBadRequest()) {
@@ -52,7 +38,7 @@ public class UserService {
         return new RegisterResult(req.getUsername(), authToken);
     }
 
-    private static LoginResult loginServiceRunner(LoginRequest req) {
+    public static LoginResult loginService(LoginRequest req) {
         LoginResult response = new LoginResult();
         // check if good request
         if (req.isBadRequest()) {
@@ -75,7 +61,7 @@ public class UserService {
         return new LoginResult(req.getUsername(), authToken);
     }
 
-    private static LogoutResult logoutServiceRunner(LogoutRequest req) {
+    public static LogoutResult logoutService(LogoutRequest req) {
         LogoutResult response = new LogoutResult();
         // check if good request
         if (req.isBadRequest()) {
