@@ -1,7 +1,5 @@
 package service.request;
 
-import dataaccess.DataAccessException;
-
 public class RegisterRequest extends RequestBase {
     private String username;
     private String password;

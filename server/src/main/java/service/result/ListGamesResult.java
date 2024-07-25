@@ -1,7 +1,6 @@
 package service.result;
 
 import model.GameData;
-import service.request.ListGamesRequest;
 
 public class ListGamesResult extends ResultBase {
     private GameData[] games;

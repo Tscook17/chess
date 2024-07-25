@@ -12,7 +12,7 @@ import org.junit.jupiter.api.Test;
 
 class DatabaseServiceTest {
     @Test
-    void clearServiceTest() throws Exception {
+    void clearServiceTest() {
         // fill user db
         UserDAO userDB = new UserDAO();
         userDB.createUser(new UserData("user1","pass1","email1"));

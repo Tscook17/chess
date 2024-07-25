@@ -20,28 +20,16 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class GameServiceTest {
     private CreateGameRequest createReqGame1;
-    private CreateGameResult createResGame1;
-    private CreateGameRequest createReqGame2;
-    private CreateGameResult createResGame2;
     private JoinGameRequest joinReq;
-    private JoinGameResult joinRes;
     private ListGamesRequest listReq;
-    private ListGamesResult listRes;
 
     @BeforeEach
     void setUp() {
         createReqGame1 = new CreateGameRequest();
         createReqGame1.setGameName("game1");
-        createResGame1 = new CreateGameResult();
-        createReqGame2 = new CreateGameRequest();
-        createReqGame2.setGameName("game2");
-        createResGame2 = new CreateGameResult();
-
         joinReq = new JoinGameRequest();
         joinReq.setPlayerColor("WHITE");
-        joinRes = new JoinGameResult();
         listReq = new ListGamesRequest();
-        listRes = new ListGamesResult();
     }
 
     @AfterEach
