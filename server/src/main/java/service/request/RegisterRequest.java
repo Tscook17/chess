@@ -2,10 +2,12 @@ package service.request;
 
 import dataaccess.DataAccessException;
 
-public class RegisterRequest {
+public class RegisterRequest extends RequestBase {
     private String username;
     private String password;
     private String email;
+
+    public RegisterRequest() {}
 
     public RegisterRequest(String username, String password, String email) {
         setUsername(username);

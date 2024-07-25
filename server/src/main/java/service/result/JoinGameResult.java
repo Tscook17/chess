@@ -1,4 +1,6 @@
 package service.result;
 
-public class JoinGameResult {
+public class JoinGameResult extends ResultBase {
+    @Override
+    void callError() {}
 }

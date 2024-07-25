@@ -1,12 +1,20 @@
 package service.result;
 
-public class LoginRegisterBase {
+public class LoginRegisterBase extends ResultBase {
     private String username = null;
     private String authToken = null;
+
+    public LoginRegisterBase() {}
 
     public LoginRegisterBase(String username, String authToken) {
         setUsername(username);
         setAuthToken(authToken);
+    }
+
+    @Override
+    void callError() {
+        setUsername(null);
+        setAuthToken(null);
     }
 
     public String getUsername() {

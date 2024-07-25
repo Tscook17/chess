@@ -1,9 +1,14 @@
 package service.result;
 
-public class CreateGameResult {
-    int gameID = -1;
+public class CreateGameResult extends ResultBase {
+    Integer gameID = null;
 
     public CreateGameResult() {}
+
+    @Override
+    void callError() {
+        setGameID(null);
+    }
 
     public CreateGameResult(int gameID) {
         setGameID(gameID);
@@ -13,7 +18,7 @@ public class CreateGameResult {
         return gameID;
     }
 
-    public void setGameID(int gameID) {
+    public void setGameID(Integer gameID) {
         this.gameID = gameID;
     }
 }

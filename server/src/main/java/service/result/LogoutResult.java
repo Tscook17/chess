@@ -1,4 +1,6 @@
 package service.result;
 
-public class LogoutResult {
+public class LogoutResult extends ResultBase {
+    @Override
+    void callError() {}
 }

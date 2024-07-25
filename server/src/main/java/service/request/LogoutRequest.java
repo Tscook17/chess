@@ -1,6 +1,6 @@
 package service.request;
 
-public class LogoutRequest {
+public class LogoutRequest extends RequestBase {
     private String authToken = null;
 
     public LogoutRequest() {}
@@ -17,6 +17,7 @@ public class LogoutRequest {
         return authToken;
     }
 
+    @Override
     public void setAuthToken(String authToken) {
         this.authToken = authToken;
     }

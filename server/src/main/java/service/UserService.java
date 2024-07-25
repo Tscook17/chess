@@ -8,23 +8,40 @@ import model.UserData;
 import service.request.LoginRequest;
 import service.request.LogoutRequest;
 import service.request.RegisterRequest;
+import service.request.RequestBase;
 import service.result.LoginResult;
 import service.result.LogoutResult;
 import service.result.RegisterResult;
+import service.result.ResultBase;
 
 import java.util.UUID;
 
 public class UserService {
 
-    public static RegisterResult registerService(RegisterRequest req) throws DataAccessException {
+    public static RegisterResult registerService(RequestBase requestBase) {
+        return registerServiceRunner((RegisterRequest) requestBase);
+    }
+
+    public static ResultBase loginService(RequestBase requestBase) {
+        return loginServiceRunner((LoginRequest) requestBase);
+    }
+
+    public static ResultBase logoutService(RequestBase requestBase) {
+        return logoutServiceRunner((LogoutRequest) requestBase);
+    }
+
+    private static RegisterResult registerServiceRunner(RegisterRequest req) {
+        RegisterResult response = new RegisterResult();
         // check if good request
         if (req.isBadRequest()) {
-            throw new DataAccessException("Error: bad request", 400);
+            response.setError("Error: bad request", 400);
+            return response;
         }
         // check if already taken
         UserDAO userDB = new UserDAO();
         if (userDB.getUser(req.getUsername()) != null) {
-            throw new DataAccessException("Error: already taken", 403);
+            response.setError("Error: already taken", 403);
+            return response;
         }
         // create user
         userDB.createUser(new UserData(req.getUsername(), req.getPassword(), req.getEmail()));
@@ -36,17 +53,20 @@ public class UserService {
         return new RegisterResult(req.getUsername(), authToken);
     }
 
-    public static LoginResult loginService(LoginRequest req) throws DataAccessException {
+    private static LoginResult loginServiceRunner(LoginRequest req) {
+        LoginResult response = new LoginResult();
         // check if good request
         if (req.isBadRequest()) {
-            throw new DataAccessException("Error: unauthorized", 401);
+            response.setError("Error: unauthorized", 401);
+            return response;
         }
         // get userData
         UserDAO userDB = new UserDAO();
         UserData userData = userDB.getUser(req.getUsername());
         // check if matches request
         if ((userData == null) || !userData.password().equals(req.getPassword())) {
-            throw new DataAccessException("Error: unauthorized", 401);
+            response.setError("Error: unauthorized", 401);
+            return response;
         }
         // create new auth token
         AuthDAO authDB = new AuthDAO();
@@ -56,14 +76,21 @@ public class UserService {
         return new LoginResult(req.getUsername(), authToken);
     }
 
-    public static LogoutResult logoutService(LogoutRequest req) throws DataAccessException {
+    private static LogoutResult logoutServiceRunner(LogoutRequest req) {
+        LogoutResult response = new LogoutResult();
         // check if good request
         if (req.isBadRequest()) {
-            throw new DataAccessException("Error: unauthorized", 401);
+            response.setError("Error: unauthorized", 401);
+            return response;
         }
         // delete authToken
         AuthDAO authDB = new AuthDAO();
-        authDB.deleteAuth(req.getAuthToken());
+        try {
+            authDB.deleteAuth(req.getAuthToken());
+        } catch(DataAccessException e) {
+            response.setError(e.getMessage(), e.getErrorCode());
+            return response;
+        }
 
         return new LogoutResult();
     }

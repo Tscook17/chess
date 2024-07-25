@@ -30,5 +30,6 @@ public class Server {
         Spark.post("/game", Handler::handleCreateGame);
         Spark.put("/game", Handler::handleJoinGame);
         Spark.delete("/db", Handler::handleClear);
+        Spark.exception(Exception.class, Handler::errorHandler);
     }
 }

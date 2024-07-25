@@ -1,6 +1,6 @@
 package service.request;
 
-public class CreateGameRequest {
+public class CreateGameRequest extends RequestBase {
     private String authToken = null;
     private String gameName = null;
 
@@ -12,6 +12,7 @@ public class CreateGameRequest {
         return authToken;
     }
 
+    @Override
     public void setAuthToken(String authToken) {
         this.authToken = authToken;
     }

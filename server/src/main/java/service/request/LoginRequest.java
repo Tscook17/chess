@@ -1,6 +1,6 @@
 package service.request;
 
-public class LoginRequest {
+public class LoginRequest extends RequestBase {
     private String username = null;
     private String password = null;
 

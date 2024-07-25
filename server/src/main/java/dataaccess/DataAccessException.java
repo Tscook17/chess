@@ -18,8 +18,4 @@ public class DataAccessException extends Exception{
     public int getErrorCode() {
         return errorCode;
     }
-
-    public void setErrorCode(int errorCode) {
-        this.errorCode = errorCode;
-    }
 }

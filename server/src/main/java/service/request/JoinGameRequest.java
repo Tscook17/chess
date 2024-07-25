@@ -1,6 +1,6 @@
 package service.request;
 
-public class JoinGameRequest {
+public class JoinGameRequest extends RequestBase {
     private String authToken = null;
     private String playerColor = null;
     private int gameID = 0;
@@ -19,6 +19,7 @@ public class JoinGameRequest {
         return authToken;
     }
 
+    @Override
     public void setAuthToken(String authToken) {
         this.authToken = authToken;
     }

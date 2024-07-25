@@ -10,12 +10,12 @@ public class UserDAO implements UserDAOInterface {
     private static Map<String, UserData> userDataDB = new HashMap<>();
 
     @Override
-    public void createUser(UserData userData) throws DataAccessException {
+    public void createUser(UserData userData) {
         userDataDB.put(userData.username(), userData);
     }
 
     @Override
-    public UserData getUser(String username) throws DataAccessException {
+    public UserData getUser(String username) {
         return userDataDB.getOrDefault(username, null);
     }
 

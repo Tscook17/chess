@@ -3,10 +3,15 @@ package service.result;
 import model.GameData;
 import service.request.ListGamesRequest;
 
-public class ListGamesResult {
+public class ListGamesResult extends ResultBase {
     private GameData[] games;
 
     public ListGamesResult() {}
+
+    @Override
+    void callError() {
+        setGames(null);
+    }
 
     public ListGamesResult(GameData[] games) {
         setGames(games);
