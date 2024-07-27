@@ -47,7 +47,7 @@ class AuthDAOTest {
     @Test
     void getAuthFailure() throws DataAccessException {
         AuthDAO authDao = new AuthDAO();
-        Assertions.assertNull(authDao.getAuth("123"));
+        Assertions.assertThrows(DataAccessException.class, ()->authDao.getAuth("123"));
     }
 
     @Test
@@ -55,13 +55,13 @@ class AuthDAOTest {
         AuthDAO authDao = new AuthDAO();
         authDao.createAuth(new AuthData("123","user"));
         authDao.deleteAuth("123");
-        Assertions.assertNull(authDao.getAuth("123"));
+        Assertions.assertThrows(DataAccessException.class, ()->authDao.getAuth("123"));
     }
 
     @Test
     void deleteAuthFailure() {
         AuthDAO authDao = new AuthDAO();
-        Assertions.assertDoesNotThrow(()->authDao.deleteAuth(""));
+        Assertions.assertThrows(DataAccessException.class, ()->authDao.deleteAuth(""));
     }
 
     @Test
@@ -69,6 +69,6 @@ class AuthDAOTest {
         AuthDAO authDao = new AuthDAO();
         authDao.createAuth(new AuthData("123","user"));
         authDao.clear();
-        Assertions.assertNull(authDao.getAuth("123"));
+        Assertions.assertThrows(DataAccessException.class, ()->authDao.getAuth("123"));
     }
 }

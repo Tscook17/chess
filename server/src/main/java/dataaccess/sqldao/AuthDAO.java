@@ -31,7 +31,7 @@ public class AuthDAO implements AuthDAOInterface {
                     }
                 }
             }
-            return null;
+            throw new DataAccessException("Error: unauthorized", 401);
         } catch(SQLException e) {
             throw new DataAccessException(e.getMessage(), 500);
         }
@@ -39,6 +39,7 @@ public class AuthDAO implements AuthDAOInterface {
 
     @Override
     public void deleteAuth(String authToken) throws DataAccessException {
+        getAuth(authToken);
         String statement = "DELETE FROM authData WHERE authToken=?";
         executeStatement(statement, authToken);
     }
