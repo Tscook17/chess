@@ -61,4 +61,12 @@ class UserDAOTest {
         userDao.clear();
         Assertions.assertNull(userDao.getUser("user"));
     }
+
+    @Test
+    void passwordHash() throws DataAccessException {
+        UserDAO userDao = new UserDAO();
+        userDao.createUser(new UserData("user","pw","email"));
+        UserData userData = userDao.getUser("user");
+        Assertions.assertTrue(userDao.verifyPassword(userData.password(), "pw"));
+    }
 }

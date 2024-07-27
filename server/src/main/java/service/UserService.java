@@ -2,7 +2,6 @@ package service;
 
 import dataaccess.mainmemory.AuthDAOBasic;
 import dataaccess.DataAccessException;
-import dataaccess.mainmemory.UserDAOBasic;
 import dataaccess.sqldao.UserDAO;
 import model.AuthData;
 import model.UserData;

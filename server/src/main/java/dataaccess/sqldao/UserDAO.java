@@ -30,11 +30,10 @@ public class UserDAO implements UserDAOInterface {
                         var password = rs.getString("password");
                         var email = rs.getString("email");
                         return new UserData(username, password, email);
-                    } else {
-                        return null;
                     }
                 }
             }
+            return null;
         } catch(SQLException e) {
             throw new DataAccessException(e.getMessage(), 500);
         }

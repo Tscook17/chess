@@ -32,7 +32,7 @@ class UserServiceTest {
     @Test
     void registerServiceSuccess() {
         RegisterResult result = UserService.registerService(registerReq);
-        Assertions.assertEquals(result.getUsername(), registerRes.getUsername());
+        Assertions.assertEquals(registerRes.getUsername(), result.getUsername());
         Assertions.assertNotNull(result.getAuthToken());
     }
 
@@ -54,7 +54,7 @@ class UserServiceTest {
     void loginServiceSuccess() {
         UserService.registerService(registerReq);
         LoginResult result = UserService.loginService(loginReq);
-        Assertions.assertEquals(result.getUsername(), loginReq.getUsername());
+        Assertions.assertEquals(loginReq.getUsername(), result.getUsername());
         Assertions.assertNotNull(result.getAuthToken());
     }
 

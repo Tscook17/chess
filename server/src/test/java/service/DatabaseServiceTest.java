@@ -3,7 +3,7 @@ package service;
 import dataaccess.mainmemory.AuthDAOBasic;
 import dataaccess.DataAccessException;
 import dataaccess.mainmemory.GameDAOBasic;
-import dataaccess.mainmemory.UserDAOBasic;
+import dataaccess.sqldao.UserDAO;
 import model.AuthData;
 import model.GameData;
 import model.UserData;
@@ -12,9 +12,9 @@ import org.junit.jupiter.api.Test;
 
 class DatabaseServiceTest {
     @Test
-    void clearServiceTest() {
+    void clearServiceTest() throws DataAccessException {
         // fill user db
-        UserDAOBasic userDB = new UserDAOBasic();
+        UserDAO userDB = new UserDAO();
         userDB.createUser(new UserData("user1","pass1","email1"));
         userDB.createUser(new UserData("user2","pass2","email2"));
         // fill authToken db

@@ -1,8 +1,9 @@
 package service;
 
+import dataaccess.DataAccessException;
 import dataaccess.mainmemory.AuthDAOBasic;
 import dataaccess.mainmemory.GameDAOBasic;
-import dataaccess.mainmemory.UserDAOBasic;
+import dataaccess.sqldao.UserDAO;
 import service.request.RequestBase;
 import service.result.ClearResult;
 
@@ -12,12 +13,18 @@ public class DatabaseService {
     }
 
     public static ClearResult clearService() {
-        AuthDAOBasic a = new AuthDAOBasic();
-        a.clear();
-        GameDAOBasic g = new GameDAOBasic();
-        g.clear();
-        UserDAOBasic u = new UserDAOBasic();
-        u.clear();
-        return new ClearResult();
+        try {
+            AuthDAOBasic a = new AuthDAOBasic();
+            a.clear();
+            GameDAOBasic g = new GameDAOBasic();
+            g.clear();
+            UserDAO u = new UserDAO();
+            u.clear();
+            return new ClearResult();
+        } catch(DataAccessException e) {
+            ClearResult response = new ClearResult();
+            response.setError(e.getMessage(), e.getErrorCode());
+            return response;
+        }
     }
 }
