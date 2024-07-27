@@ -21,7 +21,7 @@ class UserDAOTest {
     }
 
     @Test
-    void createUser() throws DataAccessException {
+    void createUserSuccess() throws DataAccessException {
         UserDAO userDao = new UserDAO();
         UserData userData = new UserData("user","pw","email");
         userDao.createUser(userData);
@@ -31,7 +31,27 @@ class UserDAOTest {
     }
 
     @Test
-    void getUser() {
+    void createUserFailure() throws DataAccessException {
+        UserDAO userDao = new UserDAO();
+        UserData userData = new UserData("user","pw","email");
+        userDao.createUser(userData);
+        Assertions.assertThrows(DataAccessException.class, ()->userDao.createUser(userData));
+    }
+
+    @Test
+    void getUserSuccess() throws DataAccessException {
+        UserDAO userDao = new UserDAO();
+        UserData userData = new UserData("user","pw","email");
+        userDao.createUser(userData);
+        UserData dataUser = userDao.getUser("user");
+        Assertions.assertNotNull(dataUser);
+    }
+
+    @Test
+    void getUserFailure() throws DataAccessException {
+        UserDAO userDao = new UserDAO();
+        UserData dataUser = userDao.getUser("user");
+        Assertions.assertNull(dataUser);
     }
 
     @Test
