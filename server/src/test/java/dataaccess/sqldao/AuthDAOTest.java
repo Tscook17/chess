@@ -51,11 +51,17 @@ class AuthDAOTest {
     }
 
     @Test
-    void deleteAuthSuccess() {
+    void deleteAuthSuccess() throws DataAccessException {
+        AuthDAO authDao = new AuthDAO();
+        authDao.createAuth(new AuthData("123","user"));
+        authDao.deleteAuth("123");
+        Assertions.assertNull(authDao.getAuth("123"));
     }
 
     @Test
     void deleteAuthFailure() {
+        AuthDAO authDao = new AuthDAO();
+        Assertions.assertDoesNotThrow(()->authDao.deleteAuth(""));
     }
 
     @Test
