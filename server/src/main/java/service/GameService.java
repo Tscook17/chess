@@ -1,8 +1,8 @@
 package service;
 
-import dataaccess.mainmemory.AuthDAOBasic;
 import dataaccess.DataAccessException;
 import dataaccess.mainmemory.GameDAOBasic;
+import dataaccess.sqldao.AuthDAO;
 import model.AuthData;
 import service.request.*;
 import service.result.*;
@@ -16,7 +16,7 @@ public class GameService {
             return response;
         }
         // get authData
-        AuthDAOBasic authDB = new AuthDAOBasic();
+        AuthDAO authDB = new AuthDAO();
         try {
             authDB.getAuth(req.getAuthToken());
         } catch(DataAccessException e) {
@@ -37,7 +37,7 @@ public class GameService {
         }
         try {
             // get authToken
-            AuthDAOBasic authDB = new AuthDAOBasic();
+            AuthDAO authDB = new AuthDAO();
             AuthData authData = authDB.getAuth(req.getAuthToken());
             // update game
             GameDAOBasic gameDB = new GameDAOBasic();
@@ -53,7 +53,7 @@ public class GameService {
     public static ListGamesResult listGamesService(ListGamesRequest req) {
         ListGamesResult response = new ListGamesResult();
         // get authToken
-        AuthDAOBasic authDB = new AuthDAOBasic();
+        AuthDAO authDB = new AuthDAO();
         try {
             authDB.getAuth(req.getAuthToken());
         } catch(DataAccessException e) {

@@ -1,7 +1,7 @@
 package service;
 
-import dataaccess.mainmemory.AuthDAOBasic;
 import dataaccess.DataAccessException;
+import dataaccess.sqldao.AuthDAO;
 import dataaccess.sqldao.UserDAO;
 import model.AuthData;
 import model.UserData;
@@ -33,7 +33,7 @@ public class UserService {
             userDB.createUser(new UserData(req.getUsername(), req.getPassword(), req.getEmail()));
             // create authToken
             String authToken = UUID.randomUUID().toString();
-            AuthDAOBasic authDB = new AuthDAOBasic();
+            AuthDAO authDB = new AuthDAO();
             authDB.createAuth(new AuthData(authToken, req.getUsername()));
 
             return new RegisterResult(req.getUsername(), authToken);
@@ -60,7 +60,7 @@ public class UserService {
                 return response;
             }
             // create new auth token
-            AuthDAOBasic authDB = new AuthDAOBasic();
+            AuthDAO authDB = new AuthDAO();
             String authToken = UUID.randomUUID().toString();
             authDB.createAuth(new AuthData(authToken, req.getUsername()));
 
@@ -79,7 +79,7 @@ public class UserService {
             return response;
         }
         // delete authToken
-        AuthDAOBasic authDB = new AuthDAOBasic();
+        AuthDAO authDB = new AuthDAO();
         try {
             authDB.deleteAuth(req.getAuthToken());
         } catch(DataAccessException e) {

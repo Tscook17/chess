@@ -1,8 +1,8 @@
 package service;
 
-import dataaccess.mainmemory.AuthDAOBasic;
 import dataaccess.DataAccessException;
 import dataaccess.mainmemory.GameDAOBasic;
+import dataaccess.sqldao.AuthDAO;
 import dataaccess.sqldao.UserDAO;
 import model.AuthData;
 import model.GameData;
@@ -18,7 +18,7 @@ class DatabaseServiceTest {
         userDB.createUser(new UserData("user1","pass1","email1"));
         userDB.createUser(new UserData("user2","pass2","email2"));
         // fill authToken db
-        AuthDAOBasic authDB = new AuthDAOBasic();
+        AuthDAO authDB = new AuthDAO();
         authDB.createAuth(new AuthData("123","user1"));
         authDB.createAuth(new AuthData("456","user2"));
         // fill game db

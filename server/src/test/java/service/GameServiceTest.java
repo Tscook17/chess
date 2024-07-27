@@ -1,8 +1,8 @@
 package service;
 
-import dataaccess.mainmemory.AuthDAOBasic;
 import dataaccess.DataAccessException;
 import dataaccess.mainmemory.GameDAOBasic;
+import dataaccess.sqldao.AuthDAO;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -69,7 +69,7 @@ class GameServiceTest {
             joinReq.setAuthToken(registerRes.getAuthToken());
             joinReq.setGameID(gameData.getGameID());
             GameService.joinGameService(joinReq);
-            String username = new AuthDAOBasic().getAuth(registerRes.getAuthToken()).username();
+            String username = new AuthDAO().getAuth(registerRes.getAuthToken()).username();
             assertEquals(new GameDAOBasic().getGame(gameData.getGameID()).whiteUsername(), username);
         } catch(DataAccessException e) {
             Assertions.fail();

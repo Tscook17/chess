@@ -6,7 +6,7 @@ import model.GameData;
 
 public class GameDAO implements GameDAOInterface {
     @Override
-    public int createGame(String gameName) {
+    public int createGame(String gameName) throws DataAccessException {
         return 0;
     }
 
@@ -16,7 +16,7 @@ public class GameDAO implements GameDAOInterface {
     }
 
     @Override
-    public GameData[] listGames() {
+    public GameData[] listGames() throws DataAccessException {
         return new GameData[0];
     }
 
@@ -26,7 +26,7 @@ public class GameDAO implements GameDAOInterface {
     }
 
     @Override
-    public void clear() {
+    public void clear() throws DataAccessException {
 
     }
 }
