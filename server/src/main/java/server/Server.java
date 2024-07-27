@@ -1,6 +1,9 @@
 package server;
 
+import dataaccess.DataAccessException;
 import spark.*;
+
+import static dataaccess.DatabaseManager.createDatabase;
 
 public class Server {
 
@@ -14,6 +17,14 @@ public class Server {
 
         Spark.awaitInitialization();
         System.out.println("Listening on port " + desiredPort);
+
+        // Check if database exists
+        try {
+            createDatabase();
+        } catch(DataAccessException e) {
+            throw new Error(e.getMessage());
+        }
+
         return Spark.port();
     }
 

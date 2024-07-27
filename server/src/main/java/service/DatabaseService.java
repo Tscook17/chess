@@ -1,8 +1,8 @@
 package service;
 
-import dataaccess.AuthDAO;
-import dataaccess.GameDAO;
-import dataaccess.UserDAO;
+import dataaccess.mainmemory.AuthDAOBasic;
+import dataaccess.mainmemory.GameDAOBasic;
+import dataaccess.mainmemory.UserDAOBasic;
 import service.request.RequestBase;
 import service.result.ClearResult;
 
@@ -12,11 +12,11 @@ public class DatabaseService {
     }
 
     public static ClearResult clearService() {
-        AuthDAO a = new AuthDAO();
+        AuthDAOBasic a = new AuthDAOBasic();
         a.clear();
-        GameDAO g = new GameDAO();
+        GameDAOBasic g = new GameDAOBasic();
         g.clear();
-        UserDAO u = new UserDAO();
+        UserDAOBasic u = new UserDAOBasic();
         u.clear();
         return new ClearResult();
     }

@@ -1,6 +1,6 @@
 package service;
 
-import dataaccess.AuthDAO;
+import dataaccess.mainmemory.AuthDAOBasic;
 import dataaccess.DataAccessException;
 import org.junit.jupiter.api.*;
 import service.request.LoginRequest;
@@ -70,7 +70,7 @@ class UserServiceTest {
     void logoutServiceSuccess() {
         RegisterResult authData = UserService.registerService(registerReq);
         UserService.logoutService(new LogoutRequest(authData.getAuthToken()));
-        AuthDAO authDB = new AuthDAO();
+        AuthDAOBasic authDB = new AuthDAOBasic();
         Assertions.assertThrows(DataAccessException.class, () -> authDB.getAuth(authData.getAuthToken()));
     }
 

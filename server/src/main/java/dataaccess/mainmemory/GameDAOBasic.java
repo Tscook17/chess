@@ -1,13 +1,14 @@
-package dataaccess;
+package dataaccess.mainmemory;
 
 import chess.ChessGame;
+import dataaccess.DataAccessException;
 import dataaccess.daointerfaces.GameDAOInterface;
 import model.GameData;
 
 import java.util.HashMap;
 import java.util.Map;
 
-public class GameDAO implements GameDAOInterface {
+public class GameDAOBasic implements GameDAOInterface {
     private static Map<Integer, GameData> gameDataDB = new HashMap<>();
     private static int currentGameID = 1;
 

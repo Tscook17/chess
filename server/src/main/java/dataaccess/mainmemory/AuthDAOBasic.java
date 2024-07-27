@@ -1,12 +1,13 @@
-package dataaccess;
+package dataaccess.mainmemory;
 
+import dataaccess.DataAccessException;
 import dataaccess.daointerfaces.AuthDAOInterface;
 import model.AuthData;
 
 import java.util.HashMap;
 import java.util.Map;
 
-public class AuthDAO implements AuthDAOInterface {
+public class AuthDAOBasic implements AuthDAOInterface {
     private static Map<String, String> authDataDB = new HashMap<>();
 
     @Override

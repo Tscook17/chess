@@ -1,8 +1,8 @@
 package service;
 
-import dataaccess.AuthDAO;
+import dataaccess.mainmemory.AuthDAOBasic;
 import dataaccess.DataAccessException;
-import dataaccess.GameDAO;
+import dataaccess.mainmemory.GameDAOBasic;
 import model.AuthData;
 import service.request.*;
 import service.result.*;
@@ -16,7 +16,7 @@ public class GameService {
             return response;
         }
         // get authData
-        AuthDAO authDB = new AuthDAO();
+        AuthDAOBasic authDB = new AuthDAOBasic();
         try {
             authDB.getAuth(req.getAuthToken());
         } catch(DataAccessException e) {
@@ -24,7 +24,7 @@ public class GameService {
             return response;
         }
         // create game
-        GameDAO gameDB = new GameDAO();
+        GameDAOBasic gameDB = new GameDAOBasic();
         return new CreateGameResult(gameDB.createGame(req.getGameName()));
     }
 
@@ -37,10 +37,10 @@ public class GameService {
         }
         try {
             // get authToken
-            AuthDAO authDB = new AuthDAO();
+            AuthDAOBasic authDB = new AuthDAOBasic();
             AuthData authData = authDB.getAuth(req.getAuthToken());
             // update game
-            GameDAO gameDB = new GameDAO();
+            GameDAOBasic gameDB = new GameDAOBasic();
             gameDB.updateGame(req.getGameID(), req.getPlayerColor(), authData.username());
         } catch(DataAccessException e) {
             response.setError(e.getMessage(), e.getErrorCode());
@@ -53,7 +53,7 @@ public class GameService {
     public static ListGamesResult listGamesService(ListGamesRequest req) {
         ListGamesResult response = new ListGamesResult();
         // get authToken
-        AuthDAO authDB = new AuthDAO();
+        AuthDAOBasic authDB = new AuthDAOBasic();
         try {
             authDB.getAuth(req.getAuthToken());
         } catch(DataAccessException e) {
@@ -61,7 +61,7 @@ public class GameService {
             return response;
         }
         // list games
-        GameDAO gameDB = new GameDAO();
+        GameDAOBasic gameDB = new GameDAOBasic();
         return new ListGamesResult(gameDB.listGames());
     }
 }

@@ -1,8 +1,8 @@
 package service;
 
-import dataaccess.AuthDAO;
+import dataaccess.mainmemory.AuthDAOBasic;
 import dataaccess.DataAccessException;
-import dataaccess.UserDAO;
+import dataaccess.mainmemory.UserDAOBasic;
 import model.AuthData;
 import model.UserData;
 import service.request.LoginRequest;
@@ -23,7 +23,7 @@ public class UserService {
             return response;
         }
         // check if already taken
-        UserDAO userDB = new UserDAO();
+        UserDAOBasic userDB = new UserDAOBasic();
         if (userDB.getUser(req.getUsername()) != null) {
             response.setError("Error: already taken", 403);
             return response;
@@ -32,7 +32,7 @@ public class UserService {
         userDB.createUser(new UserData(req.getUsername(), req.getPassword(), req.getEmail()));
         // create authToken
         String authToken = UUID.randomUUID().toString();
-        AuthDAO authDB = new AuthDAO();
+        AuthDAOBasic authDB = new AuthDAOBasic();
         authDB.createAuth(new AuthData(authToken, req.getUsername()));
 
         return new RegisterResult(req.getUsername(), authToken);
@@ -46,7 +46,7 @@ public class UserService {
             return response;
         }
         // get userData
-        UserDAO userDB = new UserDAO();
+        UserDAOBasic userDB = new UserDAOBasic();
         UserData userData = userDB.getUser(req.getUsername());
         // check if matches request
         if ((userData == null) || !userData.password().equals(req.getPassword())) {
@@ -54,7 +54,7 @@ public class UserService {
             return response;
         }
         // create new auth token
-        AuthDAO authDB = new AuthDAO();
+        AuthDAOBasic authDB = new AuthDAOBasic();
         String authToken = UUID.randomUUID().toString();
         authDB.createAuth(new AuthData(authToken, req.getUsername()));
 
@@ -69,7 +69,7 @@ public class UserService {
             return response;
         }
         // delete authToken
-        AuthDAO authDB = new AuthDAO();
+        AuthDAOBasic authDB = new AuthDAOBasic();
         try {
             authDB.deleteAuth(req.getAuthToken());
         } catch(DataAccessException e) {

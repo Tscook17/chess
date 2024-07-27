@@ -36,15 +36,57 @@ public class DatabaseManager {
     /**
      * Creates the database if it does not already exist.
      */
-    static void createDatabase() throws DataAccessException {
-        try {
-            var statement = "CREATE DATABASE IF NOT EXISTS " + DATABASE_NAME;
-            var conn = DriverManager.getConnection(CONNECTION_URL, USER, PASSWORD);
+    public static void createDatabase() throws DataAccessException {
+        var statement = "CREATE DATABASE IF NOT EXISTS " + DATABASE_NAME;
+        try (var conn = DriverManager.getConnection(CONNECTION_URL, USER, PASSWORD)) {
             try (var preparedStatement = conn.prepareStatement(statement)) {
                 preparedStatement.executeUpdate();
             }
+            conn.setCatalog(DATABASE_NAME);
+            createUserTable(conn);
+            createGameTable(conn);
+            createAuthTable(conn);
         } catch (SQLException e) {
             throw new DataAccessException(e.getMessage());
+        }
+    }
+
+    private static void createUserTable(Connection conn) throws SQLException {
+        var statement = """
+                CREATE TABLE IF NOT EXISTS UserData (
+                    username varchar(255) NOT NULL,
+                    password varchar(255) NOT NULL,
+                    email varchar(255) NOT NULL,
+                    PRIMARY KEY (username)
+                )""";
+        try (var preparedStatement = conn.prepareStatement(statement)) {
+            preparedStatement.executeUpdate();
+        }
+    }
+
+    private static void createAuthTable(Connection conn) throws SQLException {
+        var statement = """
+                CREATE TABLE IF NOT EXISTS AuthData (
+                    authToken varchar(255) NOT NULL,
+                    userName varchar(255) NOT NULL,
+                    PRIMARY KEY (authToken)
+                )""";
+        try (var preparedStatement = conn.prepareStatement(statement)) {
+            preparedStatement.executeUpdate();
+        }
+    }
+
+    private static void createGameTable(Connection conn) throws SQLException {
+        var statement = """
+                CREATE TABLE IF NOT EXISTS GameData (
+                    gameID int NOT NULL AUTO_INCREMENT,
+                    whiteUsername varchar(255) DEFAULT NULL,
+                    blackUsername varchar(255) DEFAULT NULL,
+                    game longText NOT NULL,
+                    PRIMARY KEY (gameID)
+                )""";
+        try (var preparedStatement = conn.prepareStatement(statement)) {
+            preparedStatement.executeUpdate();
         }
     }
 
@@ -60,7 +102,7 @@ public class DatabaseManager {
      * }
      * </code>
      */
-    static Connection getConnection() throws DataAccessException {
+    public static Connection getConnection() throws DataAccessException {
         try {
             var conn = DriverManager.getConnection(CONNECTION_URL, USER, PASSWORD);
             conn.setCatalog(DATABASE_NAME);
