@@ -3,6 +3,7 @@ package dataaccess.sqldao;
 import dataaccess.DataAccessException;
 import model.UserData;
 import org.eclipse.jetty.server.Authentication;
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -17,6 +18,11 @@ class UserDAOTest {
 
     @BeforeEach
     void setUp() throws DataAccessException {
+        new UserDAO().clear();
+    }
+
+    @AfterAll
+    static void cleanup() throws DataAccessException {
         new UserDAO().clear();
     }
 
