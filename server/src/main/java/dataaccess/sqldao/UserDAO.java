@@ -13,7 +13,7 @@ import static dataaccess.DatabaseManager.getConnection;
 public class UserDAO implements UserDAOInterface {
     @Override
     public void createUser(UserData userData) throws DataAccessException {
-        String statement = "INSERT INTO userData (username, password, email) VALUES(?, ?, ?)";
+        String statement = "INSERT INTO UserData (username, password, email) VALUES(?, ?, ?)";
         String hashPW = hashPassword(userData.password());
         executeStatement(statement, userData.username(), hashPW, userData.email());
     }
@@ -21,7 +21,7 @@ public class UserDAO implements UserDAOInterface {
     @Override
     public UserData getUser(String findUsername) throws DataAccessException {
         try (var conn = getConnection()) {
-            String statement = "SELECT username, password, email FROM userData WHERE username=?";
+            String statement = "SELECT username, password, email FROM UserData WHERE username=?";
             try (var preparedStatement = conn.prepareStatement(statement)) {
                 preparedStatement.setString(1, findUsername);
                 try (var rs = preparedStatement.executeQuery()) {
@@ -41,7 +41,7 @@ public class UserDAO implements UserDAOInterface {
 
     @Override
     public void clear() throws DataAccessException {
-        String statement = "TRUNCATE TABLE userData";
+        String statement = "TRUNCATE TABLE UserData";
         executeStatement(statement);
     }
 

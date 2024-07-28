@@ -15,7 +15,7 @@ import static dataaccess.DatabaseManager.getConnection;
 public class GameDAO implements GameDAOInterface {
     @Override
     public int createGame(String gameName) throws DataAccessException {
-        String statement = "INSERT INTO gameData (gameName, game) VALUES(?, ?)";
+        String statement = "INSERT INTO GameData (gameName, game) VALUES(?, ?)";
         Gson g = new Gson();
         String gameJson = g.toJson(new ChessGame());
         return executeStatement(statement, gameName, gameJson);
@@ -24,7 +24,7 @@ public class GameDAO implements GameDAOInterface {
     @Override
     public GameData getGame(int findGameID) throws DataAccessException {
         try (var conn = getConnection()) {
-            String statement = "SELECT gameID, whiteUsername, blackUsername, gameName, game FROM gameData WHERE gameID=?";
+            String statement = "SELECT gameID, whiteUsername, blackUsername, gameName, game FROM GameData WHERE gameID=?";
             try (var preparedStatement = conn.prepareStatement(statement)) {
                 preparedStatement.setInt(1, findGameID);
                 try (var rs = preparedStatement.executeQuery()) {
@@ -49,7 +49,7 @@ public class GameDAO implements GameDAOInterface {
     @Override
     public GameData[] listGames() throws DataAccessException {
         try (var conn = getConnection()) {
-            String statement = "SELECT gameID, whiteUsername, blackUsername, gameName, game FROM gameData";
+            String statement = "SELECT gameID, whiteUsername, blackUsername, gameName, game FROM GameData";
             try (var preparedStatement = conn.prepareStatement(statement)) {
                 try (var rs = preparedStatement.executeQuery()) {
                     ArrayList<GameData> gameList = new ArrayList<>();
@@ -77,10 +77,10 @@ public class GameDAO implements GameDAOInterface {
         // check if available
         if (isPlayerColorFree(oldGame, playerColor)) {
             if (playerColor.equalsIgnoreCase("WHITE")) {
-                String statement = "UPDATE gameData SET whiteUsername=? WHERE gameID=?";
+                String statement = "UPDATE GameData SET whiteUsername=? WHERE gameID=?";
                 executeStatement(statement, username, gameID);
             } else {
-                String statement = "UPDATE gameData SET blackUsername=? WHERE gameID=?";
+                String statement = "UPDATE GameData SET blackUsername=? WHERE gameID=?";
                 executeStatement(statement, username, gameID);
             }
         } else {
@@ -90,7 +90,7 @@ public class GameDAO implements GameDAOInterface {
 
     @Override
     public void clear() throws DataAccessException {
-        String statement = "TRUNCATE TABLE gameData";
+        String statement = "TRUNCATE TABLE GameData";
         executeStatement(statement);
     }
 
