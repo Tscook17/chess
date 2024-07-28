@@ -76,11 +76,12 @@ public class GameDAO implements GameDAOInterface {
         GameData oldGame = getGame(gameID);
         // check if available
         if (isPlayerColorFree(oldGame, playerColor)) {
-            String statement = "UPDATE gameData SET ?=? WHERE gameID=?";
             if (playerColor.equalsIgnoreCase("WHITE")) {
-                executeStatement(statement, "whiteUsername", username, gameID);
+                String statement = "UPDATE gameData SET whiteUsername=? WHERE gameID=?";
+                executeStatement(statement, username, gameID);
             } else {
-                executeStatement(statement, "blackUsername", username, gameID);
+                String statement = "UPDATE gameData SET blackUsername=? WHERE gameID=?";
+                executeStatement(statement, username, gameID);
             }
         } else {
             throw new DataAccessException("Error: already taken", 403);

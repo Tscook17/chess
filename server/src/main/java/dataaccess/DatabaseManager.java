@@ -85,6 +85,7 @@ public class DatabaseManager {
                     gameID int NOT NULL AUTO_INCREMENT,
                     whiteUsername varchar(255) DEFAULT NULL,
                     blackUsername varchar(255) DEFAULT NULL,
+                    gameName varchar(255) NOT NULL,
                     game longText NOT NULL,
                     PRIMARY KEY (gameID)
                 )""";
