@@ -1,8 +1,8 @@
 package service;
 
 import dataaccess.DataAccessException;
-import dataaccess.mainmemory.GameDAOBasic;
 import dataaccess.sqldao.AuthDAO;
+import dataaccess.sqldao.GameDAO;
 import dataaccess.sqldao.UserDAO;
 import service.request.RequestBase;
 import service.result.ClearResult;
@@ -16,7 +16,7 @@ public class DatabaseService {
         try {
             AuthDAO a = new AuthDAO();
             a.clear();
-            GameDAOBasic g = new GameDAOBasic();
+            GameDAO g = new GameDAO();
             g.clear();
             UserDAO u = new UserDAO();
             u.clear();

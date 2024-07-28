@@ -1,8 +1,8 @@
 package service;
 
 import dataaccess.DataAccessException;
-import dataaccess.mainmemory.GameDAOBasic;
 import dataaccess.sqldao.AuthDAO;
+import dataaccess.sqldao.GameDAO;
 import model.AuthData;
 import service.request.*;
 import service.result.*;
@@ -19,13 +19,13 @@ public class GameService {
         AuthDAO authDB = new AuthDAO();
         try {
             authDB.getAuth(req.getAuthToken());
+            // create game
+            GameDAO gameDB = new GameDAO();
+            return new CreateGameResult(gameDB.createGame(req.getGameName()));
         } catch(DataAccessException e) {
             response.setError(e.getMessage(), e.getErrorCode());
             return response;
         }
-        // create game
-        GameDAOBasic gameDB = new GameDAOBasic();
-        return new CreateGameResult(gameDB.createGame(req.getGameName()));
     }
 
     public static JoinGameResult joinGameService(JoinGameRequest req) {
@@ -40,7 +40,7 @@ public class GameService {
             AuthDAO authDB = new AuthDAO();
             AuthData authData = authDB.getAuth(req.getAuthToken());
             // update game
-            GameDAOBasic gameDB = new GameDAOBasic();
+            GameDAO gameDB = new GameDAO();
             gameDB.updateGame(req.getGameID(), req.getPlayerColor(), authData.username());
         } catch(DataAccessException e) {
             response.setError(e.getMessage(), e.getErrorCode());
@@ -56,12 +56,12 @@ public class GameService {
         AuthDAO authDB = new AuthDAO();
         try {
             authDB.getAuth(req.getAuthToken());
+            // list games
+            GameDAO gameDB = new GameDAO();
+            return new ListGamesResult(gameDB.listGames());
         } catch(DataAccessException e) {
             response.setError(e.getMessage(), e.getErrorCode());
             return response;
         }
-        // list games
-        GameDAOBasic gameDB = new GameDAOBasic();
-        return new ListGamesResult(gameDB.listGames());
     }
 }

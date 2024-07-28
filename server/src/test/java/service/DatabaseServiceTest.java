@@ -1,8 +1,8 @@
 package service;
 
 import dataaccess.DataAccessException;
-import dataaccess.mainmemory.GameDAOBasic;
 import dataaccess.sqldao.AuthDAO;
+import dataaccess.sqldao.GameDAO;
 import dataaccess.sqldao.UserDAO;
 import model.AuthData;
 import model.GameData;
@@ -22,7 +22,7 @@ class DatabaseServiceTest {
         authDB.createAuth(new AuthData("123","user1"));
         authDB.createAuth(new AuthData("456","user2"));
         // fill game db
-        GameDAOBasic gameDB = new GameDAOBasic();
+        GameDAO gameDB = new GameDAO();
         gameDB.createGame("game1");
         gameDB.createGame("game2");
 
