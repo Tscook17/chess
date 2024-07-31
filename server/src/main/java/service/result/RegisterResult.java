@@ -5,6 +5,10 @@ public class RegisterResult extends LoginRegisterBase {
         super();
     }
 
+    public RegisterResult(String message, int errorCode) {
+        super(message, errorCode);
+    }
+
     public RegisterResult(String username, String authToken) {
         super(username, authToken);
     }

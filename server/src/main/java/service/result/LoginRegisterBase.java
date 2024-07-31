@@ -6,6 +6,10 @@ public class LoginRegisterBase extends ResultBase {
 
     public LoginRegisterBase() {}
 
+    public LoginRegisterBase(String message, int errorCode) {
+        super(message,errorCode);
+    }
+
     public LoginRegisterBase(String username, String authToken) {
         setUsername(username);
         setAuthToken(authToken);
