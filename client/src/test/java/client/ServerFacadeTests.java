@@ -2,6 +2,7 @@ package client;
 
 import org.junit.jupiter.api.*;
 import server.Server;
+import service.result.LoginResult;
 import service.result.RegisterResult;
 import ui.ServerFacade;
 
@@ -44,7 +45,6 @@ public class ServerFacadeTests {
         if (http.getResponseCode() != HttpURLConnection.HTTP_OK) {
             throw new Exception("Could not clear database");
         }
-
         server.stop();
     }
 
@@ -53,5 +53,25 @@ public class ServerFacadeTests {
         RegisterResult result = facade.register("user","pw","email");
         Assertions.assertTrue(result.getAuthToken().length() > 10);
         Assertions.assertEquals("user", result.getUsername());
+    }
+
+    @Test
+    public void registerFailure() {
+        facade.register("user","pw","email");
+        RegisterResult result = facade.register("user","pw","email");
+        Assertions.assertNull(result.getAuthToken());
+    }
+
+    @Test
+    public void loginSuccess() {
+        facade.register("user","pw","email");
+        LoginResult result = facade.login("user","pw");
+        Assertions.assertNotNull(result.getAuthToken());
+    }
+
+    @Test
+    public void loginFailure() {
+        LoginResult result = facade.login("user","pw");
+        Assertions.assertEquals(401,result.getErrorCode());
     }
 }

@@ -1,9 +1,11 @@
 package ui;
 
 import com.google.gson.Gson;
+import service.request.LoginRequest;
 import service.request.RegisterRequest;
 import service.result.*;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
@@ -21,14 +23,33 @@ public class ServerFacade {
         try {
             String body = g.toJson(new RegisterRequest(username, password, email));
             HttpURLConnection http = sendRequest("/user", "POST", body);
-            return readResponseBody(http, RegisterResult.class);
+            if (http.getResponseCode() == HttpURLConnection.HTTP_OK) {
+                return readResponseBody(http, RegisterResult.class);
+            } else {
+                RegisterResult result = readErrorBody(http, RegisterResult.class);
+                result.setErrorCode(http.getResponseCode());
+                return result;
+            }
         } catch(Exception e) {
             return new RegisterResult(e.getMessage(), 500);
         }
     }
 
     public LoginResult login(String username, String password) {
-        return new LoginResult();
+        Gson g = new Gson();
+        try {
+            String body = g.toJson(new LoginRequest(username, password));
+            HttpURLConnection http = sendRequest("/session", "POST", body);
+            if (http.getResponseCode() == HttpURLConnection.HTTP_OK) {
+                return readResponseBody(http, LoginResult.class);
+            } else {
+                LoginResult result = readErrorBody(http, LoginResult.class);
+                result.setErrorCode(http.getResponseCode());
+                return result;
+            }
+        } catch(Exception e) {
+            return new LoginResult(e.getMessage(), 500);
+        }
     }
 
     public LogoutResult logout(String authToken) {
@@ -67,6 +88,13 @@ public class ServerFacade {
 
     private <T> T readResponseBody(HttpURLConnection http, Class<T> responseClass) throws Exception {
         try (InputStream respBody = http.getInputStream()) {
+            InputStreamReader inputStreamReader = new InputStreamReader(respBody);
+            return new Gson().fromJson(inputStreamReader, responseClass);
+        }
+    }
+
+    private <T> T readErrorBody(HttpURLConnection http, Class<T> responseClass) throws IOException {
+        try (InputStream respBody = http.getErrorStream()) {
             InputStreamReader inputStreamReader = new InputStreamReader(respBody);
             return new Gson().fromJson(inputStreamReader, responseClass);
         }
