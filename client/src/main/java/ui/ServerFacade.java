@@ -21,7 +21,7 @@ public class ServerFacade {
         Gson g = new Gson();
         try {
             String body = g.toJson(new RegisterRequest(username, password, email));
-            HttpURLConnection http = sendRequest("/user", "POST", body);
+            HttpURLConnection http = sendRequest("/user", "POST", body, "");
             RegisterResult result;
             if (http.getResponseCode() == HttpURLConnection.HTTP_OK) {
                 result = readResponseBody(http, RegisterResult.class);
@@ -39,7 +39,7 @@ public class ServerFacade {
         Gson g = new Gson();
         try {
             String body = g.toJson(new LoginRequest(username, password));
-            HttpURLConnection http = sendRequest("/session", "POST", body);
+            HttpURLConnection http = sendRequest("/session", "POST", body, "");
             LoginResult result;
             if (http.getResponseCode() == HttpURLConnection.HTTP_OK) {
                 result = readResponseBody(http, LoginResult.class);
@@ -56,8 +56,7 @@ public class ServerFacade {
     public LogoutResult logout(String authToken) {
         Gson g = new Gson();
         try {
-            String body = g.toJson(new LogoutRequest(authToken));
-            HttpURLConnection http = sendRequest("/session", "DELETE", body);
+            HttpURLConnection http = sendRequest("/session", "DELETE", "", authToken);
             LogoutResult result;
             if (http.getResponseCode() == HttpURLConnection.HTTP_OK) {
                 result = readResponseBody(http, LogoutResult.class);
@@ -74,8 +73,7 @@ public class ServerFacade {
     public ListGamesResult listGames(String authToken) {
         Gson g = new Gson();
         try {
-            String body = g.toJson(new ListGamesRequest(authToken));
-            HttpURLConnection http = sendRequest("/game", "GET", body);
+            HttpURLConnection http = sendRequest("/game", "GET", "", authToken);
             ListGamesResult result;
             if (http.getResponseCode() == HttpURLConnection.HTTP_OK) {
                 result = readResponseBody(http, ListGamesResult.class);
@@ -92,8 +90,8 @@ public class ServerFacade {
     public CreateGameResult createGame(String authToken, String gameName) {
         Gson g = new Gson();
         try {
-            String body = g.toJson(new CreateGameRequest(authToken, gameName));
-            HttpURLConnection http = sendRequest("/game", "POST", body);
+            String body = g.toJson(new CreateGameRequest(null, gameName));
+            HttpURLConnection http = sendRequest("/game", "POST", body, authToken);
             CreateGameResult result;
             if (http.getResponseCode() == HttpURLConnection.HTTP_OK) {
                 result = readResponseBody(http, CreateGameResult.class);
@@ -110,8 +108,8 @@ public class ServerFacade {
     public JoinGameResult joinGame(String authToken, String playerColor, int gameID) {
         Gson g = new Gson();
         try {
-            String body = g.toJson(new JoinGameRequest(authToken, playerColor, gameID));
-            HttpURLConnection http = sendRequest("/game", "PUT", body);
+            String body = g.toJson(new JoinGameRequest(null, playerColor, gameID));
+            HttpURLConnection http = sendRequest("/game", "PUT", body, authToken);
             JoinGameResult result;
             if (http.getResponseCode() == HttpURLConnection.HTTP_OK) {
                 result = readResponseBody(http, JoinGameResult.class);
@@ -125,13 +123,20 @@ public class ServerFacade {
         }
     }
 
-    private HttpURLConnection sendRequest(String path, String method, String body) throws Exception {
+    private HttpURLConnection sendRequest(String path, String method, String body, String authToken) throws Exception {
         URI uri = new URI(url + path);
         HttpURLConnection http = (HttpURLConnection) uri.toURL().openConnection();
         http.setRequestMethod(method);
+        writeAuthToken(authToken, http);
         writeRequestBody(body, http);
         http.connect();
         return http;
+    }
+
+    private void writeAuthToken(String authToken, HttpURLConnection http) {
+        if (!authToken.isEmpty()) {
+            http.addRequestProperty("authorization", authToken);
+        }
     }
 
     private void writeRequestBody(String body, HttpURLConnection http) throws Exception {

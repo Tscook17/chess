@@ -90,14 +90,13 @@ public class ServerFacadeTests {
     @Test
     public void listGamesSuccess() {
         RegisterResult regRes = facade.register("user","pw","email");
-        facade.createGame(regRes.getAuthToken(), "newGame");
         ListGamesResult result = facade.listGames(regRes.getAuthToken());
         Assertions.assertEquals(200, result.getErrorCode());
     }
 
     @Test
     public void listGamesFailure() {
-
+        Assertions.assertEquals(401, facade.listGames("123").getErrorCode());
     }
 
     @Test
