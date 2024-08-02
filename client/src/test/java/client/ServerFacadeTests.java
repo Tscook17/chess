@@ -3,6 +3,7 @@ package client;
 import org.junit.jupiter.api.*;
 import server.Server;
 import service.result.LoginResult;
+import service.result.LogoutResult;
 import service.result.RegisterResult;
 import ui.ServerFacade;
 
@@ -73,5 +74,18 @@ public class ServerFacadeTests {
     public void loginFailure() {
         LoginResult result = facade.login("user","pw");
         Assertions.assertEquals(401,result.getErrorCode());
+    }
+
+    @Test
+    public void logoutSuccess() {
+        facade.register("user","pw","email");
+        LoginResult result = facade.login("user","pw");
+        Assertions.assertEquals(200,facade.logout(result.getAuthToken()).getErrorCode());
+    }
+
+    @Test
+    public void logoutFailure() {
+        LogoutResult result = facade.logout("123");
+        Assertions.assertEquals(401, result.getErrorCode());
     }
 }

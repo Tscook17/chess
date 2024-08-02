@@ -2,6 +2,7 @@ package ui;
 
 import com.google.gson.Gson;
 import service.request.LoginRequest;
+import service.request.LogoutRequest;
 import service.request.RegisterRequest;
 import service.result.*;
 
@@ -23,13 +24,14 @@ public class ServerFacade {
         try {
             String body = g.toJson(new RegisterRequest(username, password, email));
             HttpURLConnection http = sendRequest("/user", "POST", body);
+            RegisterResult result;
             if (http.getResponseCode() == HttpURLConnection.HTTP_OK) {
-                return readResponseBody(http, RegisterResult.class);
+                result = readResponseBody(http, RegisterResult.class);
             } else {
-                RegisterResult result = readErrorBody(http, RegisterResult.class);
-                result.setErrorCode(http.getResponseCode());
-                return result;
+                result = readErrorBody(http, RegisterResult.class);
             }
+            result.setErrorCode(http.getResponseCode());
+            return result;
         } catch(Exception e) {
             return new RegisterResult(e.getMessage(), 500);
         }
@@ -40,20 +42,35 @@ public class ServerFacade {
         try {
             String body = g.toJson(new LoginRequest(username, password));
             HttpURLConnection http = sendRequest("/session", "POST", body);
+            LoginResult result;
             if (http.getResponseCode() == HttpURLConnection.HTTP_OK) {
-                return readResponseBody(http, LoginResult.class);
+                result = readResponseBody(http, LoginResult.class);
             } else {
-                LoginResult result = readErrorBody(http, LoginResult.class);
-                result.setErrorCode(http.getResponseCode());
-                return result;
+                result = readErrorBody(http, LoginResult.class);
             }
+            result.setErrorCode(http.getResponseCode());
+            return result;
         } catch(Exception e) {
             return new LoginResult(e.getMessage(), 500);
         }
     }
 
     public LogoutResult logout(String authToken) {
-        return new LogoutResult();
+        Gson g = new Gson();
+        try {
+            String body = g.toJson(new LogoutRequest(authToken));
+            HttpURLConnection http = sendRequest("/session", "DELETE", body);
+            LogoutResult result;
+            if (http.getResponseCode() == HttpURLConnection.HTTP_OK) {
+                result = readResponseBody(http, LogoutResult.class);
+            } else {
+                result = readErrorBody(http, LogoutResult.class);
+            }
+            result.setErrorCode(http.getResponseCode());
+            return result;
+        } catch(Exception e) {
+            return new LogoutResult(e.getMessage(), 500);
+        }
     }
 
     public ListGamesResult listGames(String authToken) {
