@@ -7,13 +7,17 @@ public class ListGamesResult extends ResultBase {
 
     public ListGamesResult() {}
 
-    @Override
-    void callError() {
-        setGames(null);
+    public ListGamesResult(String message, int errorCode) {
+        super(message, errorCode);
     }
 
     public ListGamesResult(GameData[] games) {
         setGames(games);
+    }
+
+    @Override
+    void callError() {
+        setGames(null);
     }
 
     public GameData[] getGames() {

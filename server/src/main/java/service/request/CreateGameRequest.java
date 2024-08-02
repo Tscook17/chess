@@ -4,6 +4,13 @@ public class CreateGameRequest extends RequestBase {
     private String authToken = null;
     private String gameName = null;
 
+    public CreateGameRequest() {}
+
+    public CreateGameRequest(String authToken, String gameName) {
+        setAuthToken(authToken);
+        setGameName(gameName);
+    }
+
     public boolean isBadRequest() {
         return (authToken == null || gameName == null);
     }

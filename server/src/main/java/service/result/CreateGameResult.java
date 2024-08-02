@@ -5,6 +5,10 @@ public class CreateGameResult extends ResultBase {
 
     public CreateGameResult() {}
 
+    public CreateGameResult(String message, int errorCode) {
+        super(message, errorCode);
+    }
+
     @Override
     void callError() {
         setGameID(null);

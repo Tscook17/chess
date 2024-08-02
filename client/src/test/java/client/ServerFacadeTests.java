@@ -2,6 +2,7 @@ package client;
 
 import org.junit.jupiter.api.*;
 import server.Server;
+import service.result.ListGamesResult;
 import service.result.LoginResult;
 import service.result.LogoutResult;
 import service.result.RegisterResult;
@@ -87,5 +88,38 @@ public class ServerFacadeTests {
     public void logoutFailure() {
         LogoutResult result = facade.logout("123");
         Assertions.assertEquals(401, result.getErrorCode());
+    }
+
+    @Test
+    public void listGamesSuccess() {
+        RegisterResult regRes = facade.register("user","pw","email");
+        ListGamesResult result = facade.listGames(regRes.getAuthToken());
+        Assertions.assertEquals(200, result.getErrorCode());
+    }
+
+    @Test
+    public void listGamesFailure() {
+
+    }
+
+    @Test
+    public void createGameSuccess() {
+        RegisterResult regRes = facade.register("user","pw","email");
+        Assertions.assertTrue(facade.createGame(regRes.getAuthToken(), "newGame").getGameID() > 0);
+    }
+
+    @Test
+    public void createGameFailure() {
+        Assertions.assertEquals(401,facade.createGame("123", "newGame").getErrorCode());
+    }
+
+    @Test
+    public void joinGameSuccess() {
+
+    }
+
+    @Test
+    public void joinGameFailure() {
+
     }
 }

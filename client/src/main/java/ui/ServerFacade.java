@@ -1,9 +1,7 @@
 package ui;
 
 import com.google.gson.Gson;
-import service.request.LoginRequest;
-import service.request.LogoutRequest;
-import service.request.RegisterRequest;
+import service.request.*;
 import service.result.*;
 
 import java.io.IOException;
@@ -74,11 +72,39 @@ public class ServerFacade {
     }
 
     public ListGamesResult listGames(String authToken) {
-        return new ListGamesResult();
+        Gson g = new Gson();
+        try {
+            String body = g.toJson(new ListGamesRequest(authToken));
+            HttpURLConnection http = sendRequest("/game", "GET", body);
+            ListGamesResult result;
+            if (http.getResponseCode() == HttpURLConnection.HTTP_OK) {
+                result = readResponseBody(http, ListGamesResult.class);
+            } else {
+                result = readErrorBody(http, ListGamesResult.class);
+            }
+            result.setErrorCode(http.getResponseCode());
+            return result;
+        } catch(Exception e) {
+            return new ListGamesResult(e.getMessage(), 500);
+        }
     }
 
     public CreateGameResult createGame(String authToken, String gameName) {
-        return new CreateGameResult();
+        Gson g = new Gson();
+        try {
+            String body = g.toJson(new CreateGameRequest(authToken, gameName));
+            HttpURLConnection http = sendRequest("/game", "POST", body);
+            CreateGameResult result;
+            if (http.getResponseCode() == HttpURLConnection.HTTP_OK) {
+                result = readResponseBody(http, CreateGameResult.class);
+            } else {
+                result = readErrorBody(http, CreateGameResult.class);
+            }
+            result.setErrorCode(http.getResponseCode());
+            return result;
+        } catch(Exception e) {
+            return new CreateGameResult(e.getMessage(), 500);
+        }
     }
 
     public JoinGameResult joinGame(String authToken, String playerColor, String gameID) {
