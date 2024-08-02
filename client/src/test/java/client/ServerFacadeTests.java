@@ -2,10 +2,7 @@ package client;
 
 import org.junit.jupiter.api.*;
 import server.Server;
-import service.result.ListGamesResult;
-import service.result.LoginResult;
-import service.result.LogoutResult;
-import service.result.RegisterResult;
+import service.result.*;
 import ui.ServerFacade;
 
 import java.net.HttpURLConnection;
@@ -93,6 +90,7 @@ public class ServerFacadeTests {
     @Test
     public void listGamesSuccess() {
         RegisterResult regRes = facade.register("user","pw","email");
+        facade.createGame(regRes.getAuthToken(), "newGame");
         ListGamesResult result = facade.listGames(regRes.getAuthToken());
         Assertions.assertEquals(200, result.getErrorCode());
     }
@@ -115,11 +113,17 @@ public class ServerFacadeTests {
 
     @Test
     public void joinGameSuccess() {
-
+        RegisterResult regRes = facade.register("user","pw","email");
+        CreateGameResult creRes = facade.createGame(regRes.getAuthToken(), "newGame");
+        Assertions.assertEquals(200,facade.joinGame(regRes.getAuthToken(), "WHITE", creRes.getGameID()).getErrorCode());
     }
 
     @Test
     public void joinGameFailure() {
+        RegisterResult regRes = facade.register("user","pw","email");
+        CreateGameResult creRes = facade.createGame(regRes.getAuthToken(), "newGame");
+        facade.joinGame(regRes.getAuthToken(), "WHITE", creRes.getGameID());
+        Assertions.assertEquals(403,facade.joinGame(regRes.getAuthToken(), "WHITE", creRes.getGameID()).getErrorCode());
 
     }
 }

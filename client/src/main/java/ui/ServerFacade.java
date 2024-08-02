@@ -107,8 +107,22 @@ public class ServerFacade {
         }
     }
 
-    public JoinGameResult joinGame(String authToken, String playerColor, String gameID) {
-        return new JoinGameResult();
+    public JoinGameResult joinGame(String authToken, String playerColor, int gameID) {
+        Gson g = new Gson();
+        try {
+            String body = g.toJson(new JoinGameRequest(authToken, playerColor, gameID));
+            HttpURLConnection http = sendRequest("/game", "PUT", body);
+            JoinGameResult result;
+            if (http.getResponseCode() == HttpURLConnection.HTTP_OK) {
+                result = readResponseBody(http, JoinGameResult.class);
+            } else {
+                result = readErrorBody(http, JoinGameResult.class);
+            }
+            result.setErrorCode(http.getResponseCode());
+            return result;
+        } catch(Exception e) {
+            return new JoinGameResult(e.getMessage(), 500);
+        }
     }
 
     private HttpURLConnection sendRequest(String path, String method, String body) throws Exception {

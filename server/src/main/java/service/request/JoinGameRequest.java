@@ -5,6 +5,14 @@ public class JoinGameRequest extends RequestBase {
     private String playerColor = null;
     private int gameID = 0;
 
+    public JoinGameRequest() {}
+
+    public JoinGameRequest(String authToken, String playerColor, int gameID) {
+        setAuthToken(authToken);
+        setPlayerColor(playerColor);
+        setGameID(gameID);
+    }
+
     public boolean isBadRequest() {
         if (playerColor == null ||
            (!playerColor.equalsIgnoreCase("WHITE") &&
