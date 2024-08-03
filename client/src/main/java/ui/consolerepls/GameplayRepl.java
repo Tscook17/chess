@@ -41,12 +41,7 @@ public class GameplayRepl implements Runnable {
         for (int i = 8; i > 0; i--) {
             boolean isLight = (i % 2 == 0);
             for (int j = 0; j < 10; j++) {
-                if (j == 0 || j == 9) {
-                    System.out.print(SET_BG_COLOR_LIGHT_GREY + SET_TEXT_COLOR_BLACK + " " + colNum + " ");
-                } else {
-                    printPiece(isLight, board.getPiece(new ChessPosition(i,j)));
-                    isLight = !isLight;
-                }
+                isLight = printPiece(i, j, colNum, isLight, board);
             }
             System.out.print(RESET_BG_COLOR + "\n");
             colNum--;
@@ -58,25 +53,27 @@ public class GameplayRepl implements Runnable {
         for (int i = 1; i < 9; i++) {
             boolean isLight = (i % 2 == 1);
             for (int j = 9; j >= 0; j--) {
-                if (j == 0 || j == 9) {
-                    System.out.print(SET_BG_COLOR_LIGHT_GREY + SET_TEXT_COLOR_BLACK + " " + colNum + " ");
-                } else {
-                    printPiece(isLight, board.getPiece(new ChessPosition(i,j)));
-                    isLight = !isLight;
-                }
+                isLight = printPiece(i, j, colNum, isLight, board);
             }
             System.out.print(RESET_BG_COLOR + "\n");
             colNum++;
         }
     }
 
-    private static void printPiece(boolean isLight, ChessPiece piece) {
-        System.out.print((isLight ? SET_BG_COLOR_WHITE : SET_BG_COLOR_BLACK));
-        if (piece == null) {
-            System.out.print("   ");
+    private static boolean printPiece(int row, int col, int colNum, boolean isLight, ChessBoard board) {
+        if (col == 0 || col == 9) {
+            System.out.print(SET_BG_COLOR_LIGHT_GREY + SET_TEXT_COLOR_BLACK + " " + colNum + " ");
+            return isLight;
         } else {
-            System.out.print((piece.getTeamColor() == ChessGame.TeamColor.WHITE ? SET_TEXT_COLOR_RED : SET_TEXT_COLOR_BLUE));
-            System.out.print(" " + (pieceMap.get(piece.getPieceType())) + " ");
+            System.out.print((isLight ? SET_BG_COLOR_WHITE : SET_BG_COLOR_BLACK));
+            ChessPiece piece = board.getPiece(new ChessPosition(row,col));
+            if (piece == null) {
+                System.out.print("   ");
+            } else {
+                System.out.print((piece.getTeamColor() == ChessGame.TeamColor.WHITE ? SET_TEXT_COLOR_RED : SET_TEXT_COLOR_BLUE));
+                System.out.print(" " + (pieceMap.get(piece.getPieceType())) + " ");
+            }
+            return !isLight;
         }
     }
 
