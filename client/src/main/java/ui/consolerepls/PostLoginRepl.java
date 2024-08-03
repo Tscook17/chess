@@ -127,7 +127,13 @@ public class PostLoginRepl implements Runnable {
             gameNum = params[0];
             color = params[1].toUpperCase();
         }
-        result = facade.joinGame(facade.getUserAuthToken(), color, gameList.get(Integer.parseInt(gameNum)-1));
+        int gameNumInt = Integer.parseInt(gameNum)-1;
+        if (gameNumInt < gameList.size() && gameNumInt >= 0) {
+            result = facade.joinGame(facade.getUserAuthToken(), color, gameList.get(gameNumInt));
+        } else {
+            result = new JoinGameResult("Error: bad request", 400);
+        }
+
         // draw chess board in 2 orientations
         printBoard(new ChessGame().getBoard(), true);
         printBoard(new ChessGame().getBoard(), false);
@@ -140,6 +146,7 @@ public class PostLoginRepl implements Runnable {
     }
 
     private void observe(String[] params) {
+        JoinGameResult result;
         String gameNum;
         if (params.length != 1) {
             Scanner scanner = new Scanner(System.in);
@@ -149,13 +156,22 @@ public class PostLoginRepl implements Runnable {
         } else {
             gameNum = params[0];
         }
-        System.out.println(RESET_TEXT_COLOR + "Observing game number " + gameNum);
+        int gameNumInt = Integer.parseInt(gameNum)-1;
+        if (gameNumInt < gameList.size() && gameNumInt >= 0) {
+            System.out.println(RESET_TEXT_COLOR + "Observing game number " + gameNum);
+            result = new JoinGameResult("", 200);
+
+        } else {
+            result = new JoinGameResult("Error: bad request", 400);
+        }
         // draw chess board in 2 orientations
         printBoard(new ChessGame().getBoard(), true);
         printBoard(new ChessGame().getBoard(), false);
         // observe functionality added in phase 6
-        JoinGameResult result = new JoinGameResult("", 200); // fix
-        if (result.getErrorCode() == 200) { System.out.println("\nJoined game");
-        } else { System.out.println(SET_TEXT_COLOR_RED + "\n" + result.getMessage()); }
+        if (result.getErrorCode() == 200) {
+            System.out.println("\nObserving game");
+        } else {
+            System.out.println(SET_TEXT_COLOR_RED + "\n" + result.getMessage());
+        }
     }
 }
