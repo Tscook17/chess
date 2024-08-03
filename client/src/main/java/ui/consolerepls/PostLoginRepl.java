@@ -154,8 +154,8 @@ public class PostLoginRepl implements Runnable {
         printBoard(new ChessGame().getBoard(), true);
         printBoard(new ChessGame().getBoard(), false);
         // observe functionality added in phase 6
-//        result = facade.observeGame(facade.getUserAuthToken(), gameList.get(Integer.parseInt(gameNum)-1));
-//        if (result.getErrorCode() == 200) { System.out.println("\nJoined game");
-//        } else { System.out.println(SET_TEXT_COLOR_RED + "\n" + result.getMessage()); }
+        JoinGameResult result = new JoinGameResult("", 200); // fix
+        if (result.getErrorCode() == 200) { System.out.println("\nJoined game");
+        } else { System.out.println(SET_TEXT_COLOR_RED + "\n" + result.getMessage()); }
     }
 }

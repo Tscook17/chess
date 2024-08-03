@@ -42,18 +42,10 @@ public class GameplayRepl implements Runnable {
             boolean isLight = (i % 2 == 0);
             for (int j = 0; j < 10; j++) {
                 if (j == 0 || j == 9) {
-                    System.out.print(SET_BG_COLOR_LIGHT_GREY + SET_TEXT_COLOR_BLACK);
-                    System.out.print(" " + colNum + " ");
+                    System.out.print(SET_BG_COLOR_LIGHT_GREY + SET_TEXT_COLOR_BLACK + " " + colNum + " ");
                 } else {
-                    System.out.print((isLight ? SET_BG_COLOR_WHITE : SET_BG_COLOR_BLACK));
+                    printPiece(isLight, board.getPiece(new ChessPosition(i,j)));
                     isLight = !isLight;
-                    ChessPiece piece = board.getPiece(new ChessPosition(i,j));
-                    if (piece == null) {
-                        System.out.print("   ");
-                    } else {
-                        System.out.print((piece.getTeamColor() == ChessGame.TeamColor.WHITE ? SET_TEXT_COLOR_RED : SET_TEXT_COLOR_BLUE));
-                        System.out.print(" " + (pieceMap.get(piece.getPieceType())) + " ");
-                    }
                 }
             }
             System.out.print(RESET_BG_COLOR + "\n");
@@ -67,22 +59,24 @@ public class GameplayRepl implements Runnable {
             boolean isLight = (i % 2 == 1);
             for (int j = 9; j >= 0; j--) {
                 if (j == 0 || j == 9) {
-                    System.out.print(SET_BG_COLOR_LIGHT_GREY + SET_TEXT_COLOR_BLACK);
-                    System.out.print(" " + colNum + " ");
+                    System.out.print(SET_BG_COLOR_LIGHT_GREY + SET_TEXT_COLOR_BLACK + " " + colNum + " ");
                 } else {
-                    System.out.print((isLight ? SET_BG_COLOR_WHITE : SET_BG_COLOR_BLACK));
+                    printPiece(isLight, board.getPiece(new ChessPosition(i,j)));
                     isLight = !isLight;
-                    ChessPiece piece = board.getPiece(new ChessPosition(i,j));
-                    if (piece == null) {
-                        System.out.print("   ");
-                    } else {
-                        System.out.print((piece.getTeamColor() == ChessGame.TeamColor.WHITE ? SET_TEXT_COLOR_RED : SET_TEXT_COLOR_BLUE));
-                        System.out.print(" " + (pieceMap.get(piece.getPieceType())) + " ");
-                    }
                 }
             }
             System.out.print(RESET_BG_COLOR + "\n");
             colNum++;
+        }
+    }
+
+    private static void printPiece(boolean isLight, ChessPiece piece) {
+        System.out.print((isLight ? SET_BG_COLOR_WHITE : SET_BG_COLOR_BLACK));
+        if (piece == null) {
+            System.out.print("   ");
+        } else {
+            System.out.print((piece.getTeamColor() == ChessGame.TeamColor.WHITE ? SET_TEXT_COLOR_RED : SET_TEXT_COLOR_BLUE));
+            System.out.print(" " + (pieceMap.get(piece.getPieceType())) + " ");
         }
     }
 
