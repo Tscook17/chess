@@ -12,6 +12,7 @@ import java.net.URI;
 
 public class ServerFacade {
     private String url;
+    private String userAuthToken = null;
 
     public ServerFacade(String url) {
         this.url = url;
@@ -29,6 +30,7 @@ public class ServerFacade {
                 result = readErrorBody(http, RegisterResult.class);
             }
             result.setErrorCode(http.getResponseCode());
+            userAuthToken = result.getAuthToken();
             return result;
         } catch(Exception e) {
             return new RegisterResult(e.getMessage(), 500);
@@ -47,6 +49,7 @@ public class ServerFacade {
                 result = readErrorBody(http, LoginResult.class);
             }
             result.setErrorCode(http.getResponseCode());
+            userAuthToken = result.getAuthToken();
             return result;
         } catch(Exception e) {
             return new LoginResult(e.getMessage(), 500);
@@ -160,5 +163,13 @@ public class ServerFacade {
             InputStreamReader inputStreamReader = new InputStreamReader(respBody);
             return new Gson().fromJson(inputStreamReader, responseClass);
         }
+    }
+
+    public String getUserAuthToken() {
+        return userAuthToken;
+    }
+
+    public void setUserAuthToken(String userAuthToken) {
+        this.userAuthToken = userAuthToken;
     }
 }
