@@ -5,7 +5,6 @@ import chess.ChessGame;
 import chess.ChessPiece;
 import chess.ChessPosition;
 
-import java.util.HashMap;
 import java.util.Map;
 
 import static ui.EscapeSequences.*;
@@ -29,12 +28,12 @@ public class GameplayRepl implements Runnable {
             printLetters(false);
             printWhiteBoard(board);
             printLetters(false);
-            System.out.println(RESET_TEXT_COLOR + RESET_BG_COLOR);
         } else {
             printLetters(true);
             printBlackBoard(board);
             printLetters(true);
         }
+        System.out.println(RESET_TEXT_COLOR + RESET_BG_COLOR);
     }
 
     private static void printWhiteBoard(ChessBoard board) {

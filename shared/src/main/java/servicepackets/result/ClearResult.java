@@ -1,4 +1,4 @@
-package service.result;
+package servicepackets.result;
 
 public class ClearResult extends ResultBase {
     @Override

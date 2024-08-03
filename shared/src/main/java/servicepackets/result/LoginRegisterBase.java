@@ -1,4 +1,4 @@
-package service.result;
+package servicepackets.result;
 
 public class LoginRegisterBase extends ResultBase {
     private String username = null;

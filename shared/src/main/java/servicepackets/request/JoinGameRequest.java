@@ -1,4 +1,4 @@
-package service.request;
+package servicepackets.request;
 
 public class JoinGameRequest extends RequestBase {
     private String authToken = null;

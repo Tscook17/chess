@@ -1,4 +1,4 @@
-package service.request;
+package servicepackets.request;
 
 public class RegisterRequest extends RequestBase {
     private String username;

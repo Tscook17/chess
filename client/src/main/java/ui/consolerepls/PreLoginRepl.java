@@ -1,7 +1,7 @@
 package ui.consolerepls;
 
-import service.result.LoginResult;
-import service.result.RegisterResult;
+import servicepackets.result.LoginResult;
+import servicepackets.result.RegisterResult;
 import ui.ServerFacade;
 import static ui.EscapeSequences.*;
 

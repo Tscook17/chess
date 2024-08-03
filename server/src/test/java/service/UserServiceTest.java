@@ -3,12 +3,12 @@ package service;
 import dataaccess.DataAccessException;
 import dataaccess.sqldao.AuthDAO;
 import org.junit.jupiter.api.*;
-import service.request.LoginRequest;
-import service.request.LogoutRequest;
-import service.request.RegisterRequest;
-import service.result.LoginResult;
-import service.result.LogoutResult;
-import service.result.RegisterResult;
+import servicepackets.request.LoginRequest;
+import servicepackets.request.LogoutRequest;
+import servicepackets.request.RegisterRequest;
+import servicepackets.result.LoginResult;
+import servicepackets.result.LogoutResult;
+import servicepackets.result.RegisterResult;
 
 class UserServiceTest {
     private RegisterRequest registerReq;

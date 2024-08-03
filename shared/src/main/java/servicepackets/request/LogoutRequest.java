@@ -1,4 +1,4 @@
-package service.request;
+package servicepackets.request;
 
 public class LogoutRequest extends RequestBase {
     private String authToken = null;

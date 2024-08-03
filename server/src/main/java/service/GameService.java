@@ -4,8 +4,8 @@ import dataaccess.DataAccessException;
 import dataaccess.sqldao.AuthDAO;
 import dataaccess.sqldao.GameDAO;
 import model.AuthData;
-import service.request.*;
-import service.result.*;
+import servicepackets.result.*;
+import servicepackets.request.*;
 
 public class GameService {
     public static CreateGameResult createGameService(CreateGameRequest req) {

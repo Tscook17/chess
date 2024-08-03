@@ -1,4 +1,4 @@
-package service.request;
+package servicepackets.request;
 
 public class LoginRequest extends RequestBase {
     private String username = null;

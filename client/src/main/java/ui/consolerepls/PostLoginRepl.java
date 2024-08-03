@@ -2,7 +2,7 @@ package ui.consolerepls;
 
 import chess.ChessGame;
 import model.GameData;
-import service.result.*;
+import servicepackets.result.*;
 import ui.ServerFacade;
 
 import java.util.ArrayList;

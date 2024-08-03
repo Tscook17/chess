@@ -1,8 +1,8 @@
 package ui;
 
 import com.google.gson.Gson;
-import service.request.*;
-import service.result.*;
+import servicepackets.request.*;
+import servicepackets.result.*;
 
 import java.io.IOException;
 import java.io.InputStream;

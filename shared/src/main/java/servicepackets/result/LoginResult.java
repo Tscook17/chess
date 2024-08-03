@@ -1,6 +1,4 @@
-package service.result;
-
-import org.eclipse.jetty.util.log.Log;
+package servicepackets.result;
 
 public class LoginResult extends LoginRegisterBase {
     public LoginResult() {}

@@ -4,8 +4,8 @@ import dataaccess.DataAccessException;
 import dataaccess.sqldao.AuthDAO;
 import dataaccess.sqldao.GameDAO;
 import dataaccess.sqldao.UserDAO;
-import service.request.RequestBase;
-import service.result.ClearResult;
+import servicepackets.request.RequestBase;
+import servicepackets.result.ClearResult;
 
 public class DatabaseService {
     public static ClearResult clearService(RequestBase requestBase) {

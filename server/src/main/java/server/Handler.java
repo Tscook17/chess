@@ -4,8 +4,8 @@ import com.google.gson.Gson;
 import service.DatabaseService;
 import service.GameService;
 import service.UserService;
-import service.request.*;
-import service.result.*;
+import servicepackets.request.*;
+import servicepackets.result.*;
 import spark.Request;
 import spark.Response;
 
@@ -43,7 +43,7 @@ public class Handler {
     }
 
     private static <T extends RequestBase, G extends ResultBase> Object handleServiceCall(Request req, Response res,
-                                                                 T request, Class<T> requestType, Function<T, G> func) {
+                                                                                          T request, Class<T> requestType, Function<T, G> func) {
         Gson g = new Gson();
         if (!req.body().isEmpty()) { request = g.fromJson(req.body(),requestType);}
         if (req.headers("authorization") != null) {

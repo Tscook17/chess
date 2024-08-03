@@ -1,4 +1,4 @@
-package service.request;
+package servicepackets.request;
 
 public class ListGamesRequest extends RequestBase {
     private String authToken = null;

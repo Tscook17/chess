@@ -7,14 +7,14 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import service.request.CreateGameRequest;
-import service.request.JoinGameRequest;
-import service.request.ListGamesRequest;
-import service.request.RegisterRequest;
-import service.result.CreateGameResult;
-import service.result.JoinGameResult;
-import service.result.ListGamesResult;
-import service.result.RegisterResult;
+import servicepackets.request.CreateGameRequest;
+import servicepackets.request.JoinGameRequest;
+import servicepackets.request.ListGamesRequest;
+import servicepackets.request.RegisterRequest;
+import servicepackets.result.CreateGameResult;
+import servicepackets.result.JoinGameResult;
+import servicepackets.result.ListGamesResult;
+import servicepackets.result.RegisterResult;
 
 import static org.junit.jupiter.api.Assertions.*;
 

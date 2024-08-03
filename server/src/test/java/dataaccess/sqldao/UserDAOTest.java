@@ -2,17 +2,10 @@ package dataaccess.sqldao;
 
 import dataaccess.DataAccessException;
 import model.UserData;
-import org.eclipse.jetty.server.Authentication;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import service.request.LoginRequest;
-import service.request.LogoutRequest;
-import service.request.RegisterRequest;
-import service.result.RegisterResult;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 class UserDAOTest {
 
