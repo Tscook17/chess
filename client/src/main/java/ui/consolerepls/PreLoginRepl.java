@@ -17,7 +17,8 @@ public class PreLoginRepl implements Runnable{
 
     public void run() {
         // welcome message
-        System.out.println(RESET_TEXT_COLOR + "Welcome to my cs240 chess server. Type 'Help' to get started. -Toby");
+        System.out.println(RESET_TEXT_COLOR + WHITE_KING +
+                "Welcome to my cs240 chess server. Type 'Help' to get started." + BLACK_KING);
 
         // main pre login loop
         Scanner scanner = new Scanner(System.in);
@@ -68,7 +69,9 @@ public class PreLoginRepl implements Runnable{
             result = facade.login(params[0], params[1]);
         }
         if (result.getErrorCode() == 200) {
-            new PostLoginRepl().run(facade);
+            System.out.println("\nLogged in as " + result.getUsername());
+            PostLoginRepl repl = new PostLoginRepl(facade);
+            repl.run();
         } else {
             System.out.println(SET_TEXT_COLOR_RED + "\n" + result.getMessage());
         }
@@ -93,7 +96,10 @@ public class PreLoginRepl implements Runnable{
             result = facade.register(params[0], params[1], params[2]);
         }
         if (result.getErrorCode() == 200) {
-            new PostLoginRepl().run(facade);
+            System.out.println("\nRegistered in as " + result.getUsername());
+            System.out.println("\nLogged in as " + result.getUsername());
+            PostLoginRepl repl = new PostLoginRepl(facade);
+            repl.run();
         } else {
             System.out.println(SET_TEXT_COLOR_RED + "\n" + result.getMessage());
         }
