@@ -1,5 +1,6 @@
 package ui.consolerepls;
 
+import chess.ChessGame;
 import model.GameData;
 import service.result.*;
 import ui.ServerFacade;
@@ -9,7 +10,7 @@ import java.util.Arrays;
 import java.util.Scanner;
 
 import static ui.EscapeSequences.*;
-import static ui.EscapeSequences.RESET_TEXT_COLOR;
+import static ui.consolerepls.GameplayRepl.printBoard;
 
 public class PostLoginRepl implements Runnable {
     private final ServerFacade facade;
@@ -27,7 +28,7 @@ public class PostLoginRepl implements Runnable {
         String input = "";
         while (!input.equalsIgnoreCase("logout")) {
             // print cursor
-            System.out.print(RESET_TEXT_COLOR + "[LOGGED_IN] >>> " + SET_TEXT_COLOR_GREEN);
+            System.out.print(RESET_TEXT_COLOR + RESET_BG_COLOR + "[LOGGED_IN] >>> " + SET_TEXT_COLOR_GREEN);
             // check input
             input = scanner.nextLine();
             var tokens = input.toLowerCase().split(" ");
@@ -121,13 +122,15 @@ public class PostLoginRepl implements Runnable {
             gameNum = scanner.nextLine();
             // ask for color
             System.out.print("\nColor to join (WHITE/BLACK): ");
-            color = scanner.nextLine();
+            color = scanner.nextLine().toUpperCase();
         } else {
             gameNum = params[0];
-            color = params[1];
+            color = params[1].toUpperCase();
         }
         result = facade.joinGame(facade.getUserAuthToken(), color, gameList.get(Integer.parseInt(gameNum)-1));
         // draw chess board in 2 orientations
+        printBoard(new ChessGame().getBoard(), true);
+        printBoard(new ChessGame().getBoard(), false);
         // more functionality added in phase 6
         if (result.getErrorCode() == 200) {
             System.out.println("\nJoined game");
@@ -148,7 +151,8 @@ public class PostLoginRepl implements Runnable {
         }
         System.out.println(RESET_TEXT_COLOR + "Observing game number " + gameNum);
         // draw chess board in 2 orientations
-
+        printBoard(new ChessGame().getBoard(), true);
+        printBoard(new ChessGame().getBoard(), false);
         // observe functionality added in phase 6
 //        result = facade.observeGame(facade.getUserAuthToken(), gameList.get(Integer.parseInt(gameNum)-1));
 //        if (result.getErrorCode() == 200) { System.out.println("\nJoined game");
