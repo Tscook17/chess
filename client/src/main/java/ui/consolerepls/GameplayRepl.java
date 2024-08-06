@@ -9,7 +9,7 @@ import java.util.Map;
 
 import static ui.EscapeSequences.*;
 
-public class GameplayRepl implements Runnable {
+public class GameplayRepl implements Runnable, GameHandler {
     private static Map<ChessPiece.PieceType, String> pieceMap = Map.of(
             ChessPiece.PieceType.KING, "K",
             ChessPiece.PieceType.QUEEN, "Q",
@@ -101,5 +101,15 @@ public class GameplayRepl implements Runnable {
             }
         }
         System.out.print(RESET_BG_COLOR + "\n");
+    }
+
+    @Override
+    public void updateGame(ChessGame game) {
+
+    }
+
+    @Override
+    public void printMessage(String message) {
+
     }
 }
