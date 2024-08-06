@@ -12,7 +12,7 @@ import spark.Response;
 import java.util.Map;
 import java.util.function.Function;
 
-public class Handler {
+public class APIHandler {
 
     public static Object handleRegister(Request req, Response res) {
         return handleServiceCall(req, res, new RegisterRequest(), RegisterRequest.class, UserService::registerService);

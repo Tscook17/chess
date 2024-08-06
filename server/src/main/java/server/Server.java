@@ -34,13 +34,13 @@ public class Server {
     }
 
     private void createRoutes() {
-        Spark.post("/user", Handler::handleRegister);
-        Spark.post("/session", Handler::handleLogin);
-        Spark.delete("/session", Handler::handleLogout);
-        Spark.get("/game", Handler::handleListGames);
-        Spark.post("/game", Handler::handleCreateGame);
-        Spark.put("/game", Handler::handleJoinGame);
-        Spark.delete("/db", Handler::handleClear);
-        Spark.exception(Exception.class, Handler::errorHandler);
+        Spark.post("/user", APIHandler::handleRegister);
+        Spark.post("/session", APIHandler::handleLogin);
+        Spark.delete("/session", APIHandler::handleLogout);
+        Spark.get("/game", APIHandler::handleListGames);
+        Spark.post("/game", APIHandler::handleCreateGame);
+        Spark.put("/game", APIHandler::handleJoinGame);
+        Spark.delete("/db", APIHandler::handleClear);
+        Spark.exception(Exception.class, APIHandler::errorHandler);
     }
 }
