@@ -4,8 +4,11 @@ import com.google.gson.Gson;
 import servicepackets.request.RegisterRequest;
 import servicepackets.result.RegisterResult;
 import ui.consolerepls.GameHandler;
-import websocket.commands.ConnectCommand;
-import websocket.commands.UserGameCommand;
+import websocket.commands.*;
+import websocket.messages.ErrorMessage;
+import websocket.messages.LoadGameMessage;
+import websocket.messages.NotificationMessage;
+import websocket.messages.ServerMessage;
 
 import javax.websocket.*;
 import java.net.HttpURLConnection;
@@ -54,6 +57,13 @@ public class WebSocketFacade extends Endpoint implements MessageHandler.Whole<St
     @Override
     public void onMessage(String s) {
         // deserialize message
+        Gson g = new Gson();
+        ServerMessage message = g.fromJson(s, ServerMessage.class);
         // call GameHandler to process message
+        switch (message.getServerMessageType()) {
+            case LOAD_GAME -> gameHandler.updateGame(g.fromJson(s, LoadGameMessage.class));
+            case ERROR -> gameHandler.printMessage(g.fromJson(s, ErrorMessage.class).getErrorMessage(), true);
+            case NOTIFICATION -> gameHandler.printMessage(g.fromJson(s, NotificationMessage.class).getMessage(), false);
+        }
     }
 }

@@ -4,7 +4,9 @@ import chess.ChessBoard;
 import chess.ChessGame;
 import chess.ChessPiece;
 import chess.ChessPosition;
+import com.google.gson.Gson;
 import ui.WebSocketFacade;
+import websocket.messages.LoadGameMessage;
 
 import java.util.Arrays;
 import java.util.Map;
@@ -71,13 +73,18 @@ public class GameplayRepl implements Runnable, GameHandler {
     }
 
     @Override
-    public void updateGame(ChessGame game) {
-
+    public void updateGame(LoadGameMessage message) {
+        localGame = new Gson().fromJson(message.getGame(), ChessGame.class);
     }
 
     @Override
-    public void printMessage(String message) {
-
+    public void printMessage(String message, boolean redText) {
+        System.out.print(RESET_TEXT_COLOR + RESET_BG_COLOR);
+        if (redText) {
+            System.out.println(SET_TEXT_COLOR_RED + RESET_BG_COLOR + "\n" + message);
+        } else {
+            System.out.print(RESET_TEXT_COLOR + RESET_BG_COLOR + "\n" + message);
+        }
     }
 
     private boolean leave() { return false; }

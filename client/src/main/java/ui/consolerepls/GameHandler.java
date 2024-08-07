@@ -1,8 +1,9 @@
 package ui.consolerepls;
 
 import chess.ChessGame;
+import websocket.messages.LoadGameMessage;
 
 public interface GameHandler {
-    void updateGame(ChessGame game);
-    void printMessage(String message);
+    void updateGame(LoadGameMessage message);
+    void printMessage(String message, boolean redText);
 }
