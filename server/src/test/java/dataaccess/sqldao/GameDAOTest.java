@@ -3,7 +3,6 @@ package dataaccess.sqldao;
 import chess.ChessGame;
 import dataaccess.DataAccessException;
 import model.GameData;
-import model.UserData;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -73,19 +72,19 @@ class GameDAOTest {
     }
 
     @Test
-    void updateGameSuccess() throws DataAccessException {
+    void joinGameSuccess() throws DataAccessException {
         GameDAO gameDao = new GameDAO();
         int gameID = gameDao.createGame("gameNew");
-        gameDao.updateGame(gameID, "WHITE", "me");
+        gameDao.joinGame(gameID, "WHITE", "me");
         Assertions.assertEquals("me", gameDao.getGame(gameID).whiteUsername());
     }
 
     @Test
-    void updateGameFailure() throws DataAccessException {
+    void joinGameFailure() throws DataAccessException {
         GameDAO gameDao = new GameDAO();
         int gameID = gameDao.createGame("gameNew");
-        gameDao.updateGame(gameID, "WHITE", "me");
-        Assertions.assertThrows(DataAccessException.class, ()->gameDao.updateGame(gameID, "WHITE", "me"));
+        gameDao.joinGame(gameID, "WHITE", "me");
+        Assertions.assertThrows(DataAccessException.class, ()->gameDao.joinGame(gameID, "WHITE", "me"));
     }
 
     @Test

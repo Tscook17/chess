@@ -41,7 +41,7 @@ public class GameService {
             AuthData authData = authDB.getAuth(req.getAuthToken());
             // update game
             GameDAO gameDB = new GameDAO();
-            gameDB.updateGame(req.getGameID(), req.getPlayerColor(), authData.username());
+            gameDB.joinGame(req.getGameID(), req.getPlayerColor(), authData.username());
         } catch(DataAccessException e) {
             response.setError(e.getMessage(), e.getErrorCode());
             return response;

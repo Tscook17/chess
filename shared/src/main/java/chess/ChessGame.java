@@ -11,8 +11,9 @@ import java.util.Objects;
  * signature of the existing methods.
  */
 public class ChessGame {
-    private ChessBoard chessBoard = new ChessBoard();
     private TeamColor currentTurn = TeamColor.WHITE;
+    private boolean gameOver = false;
+    private ChessBoard chessBoard = new ChessBoard();
     private ArrayList<ChessMove> previousMoveList;
 
     public ChessGame() {
@@ -388,6 +389,14 @@ public class ChessGame {
         return chessBoard;
     }
 
+    public boolean isGameOver() {
+        return gameOver;
+    }
+
+    public void setGameOver(boolean gameOver) {
+        this.gameOver = gameOver;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) { return true; }
@@ -401,5 +410,15 @@ public class ChessGame {
     @Override
     public int hashCode() {
         return Objects.hash(chessBoard, currentTurn, previousMoveList);
+    }
+
+    @Override
+    public String toString() {
+        return "ChessGame{" +
+                "chessBoard=" + chessBoard +
+                ", currentTurn=" + currentTurn +
+                ", previousMoveList=" + previousMoveList +
+                ", gameOver=" + gameOver +
+                '}';
     }
 }

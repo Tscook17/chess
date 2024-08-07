@@ -36,7 +36,7 @@ public class GameDAOBasic implements GameDAOInterface {
     }
 
     @Override
-    public void updateGame(int gameID, String playerColor, String username) throws DataAccessException {
+    public void joinGame(int gameID, String playerColor, String username) throws DataAccessException {
         GameData oldGame = getGame(gameID);
         GameData newGame;
         // check if available

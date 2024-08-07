@@ -72,20 +72,28 @@ public class GameDAO implements GameDAOInterface {
     }
 
     @Override
-    public void updateGame(int gameID, String playerColor, String username) throws DataAccessException {
+    public void joinGame(int gameID, String playerColor, String username) throws DataAccessException {
         GameData oldGame = getGame(gameID);
         // check if available
         if (isPlayerColorFree(oldGame, playerColor)) {
+            String statement;
             if (playerColor.equalsIgnoreCase("WHITE")) {
-                String statement = "UPDATE GameData SET whiteUsername=? WHERE gameID=?";
-                executeStatement(statement, username, gameID);
+                statement = "UPDATE GameData SET whiteUsername=? WHERE gameID=?";
             } else {
-                String statement = "UPDATE GameData SET blackUsername=? WHERE gameID=?";
-                executeStatement(statement, username, gameID);
+                statement = "UPDATE GameData SET blackUsername=? WHERE gameID=?";
             }
+            executeStatement(statement, username, gameID);
         } else {
             throw new DataAccessException("Error: already taken", 403);
         }
+    }
+
+    public void updateGame(int gameID, ChessGame game) throws DataAccessException {
+        GameData oldGame = getGame(gameID);
+        String statement = "UPDATE GameData SET game=? WHERE gameID=?";
+        Gson g = new Gson();
+        String gameJson = g.toJson(game);
+        executeStatement(statement, gameJson, gameID);
     }
 
     @Override
