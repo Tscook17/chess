@@ -8,23 +8,24 @@ import org.eclipse.jetty.websocket.api.annotations.*;
 import websocket.commands.*;
 import websocket.messages.*;
 
+@WebSocket
 public class WebSocketHandler {
-    private static WebSocketSessions sessions;
+    private static WebSocketSessions sessions = new WebSocketSessions();
 
-    @OnWebSocketConnect
-    public void onConnection(Session session) {
-
-    }
-
-    @OnWebSocketClose
-    public void onClose(Session session) {
-
-    }
-
-    @OnWebSocketError
-    public void onError(Throwable throwable) {
-
-    }
+//    @OnWebSocketConnect
+//    public void onConnection(Session session) {
+//
+//    }
+//
+//    @OnWebSocketClose
+//    public void onClose(Session session) {
+//
+//    }
+//
+//    @OnWebSocketError
+//    public void onError(Throwable throwable) {
+//
+//    }
 
     @OnWebSocketMessage
     public void onMessage(Session session, String str) throws Exception {

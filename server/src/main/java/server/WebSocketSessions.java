@@ -9,15 +9,24 @@ import java.util.Set;
 public class WebSocketSessions {
     private HashMap<Integer, Set<Session>> sessionMap = new HashMap<>();
 
-    public void addSessionToGame(int gameID, Session session) {
+    public void addSessionToGame(int gameID, Session session) throws Exception {
         Set<Session> sessions = sessionMap.get(gameID);
-        sessions.add(session);
-        sessionMap.put(gameID, sessions);
+        if (sessions != null) {
+            sessions.add(session);
+            sessionMap.put(gameID, sessions);
+        } else {
+            throw new Exception("Error: this game does not exist");
+        }
+
     }
 
-    public void removeSessionFromGame(int gameID, Session session) {
+    public void removeSessionFromGame(int gameID, Session session) throws Exception {
         Set<Session> sessions = sessionMap.get(gameID);
-        sessions.remove(session);
+        if (sessions != null) {
+            sessions.remove(session);
+        } else {
+            throw new Exception("Error: this game does not exist");
+        }
     }
 
     public void removeSession(Session session) {
@@ -26,8 +35,13 @@ public class WebSocketSessions {
         }
     }
 
-    public Set<Session> getSessionsForGame(int gameID) {
-        return sessionMap.get(gameID);
+    public Set<Session> getSessionsForGame(int gameID) throws Exception {
+        Set<Session> sessions = sessionMap.get(gameID);
+        if (sessions != null) {
+            return sessions;
+        } else {
+            throw new Exception("Error: this game does not exist");
+        }
     }
 
     public void sendMessage(String message, Session session) throws Exception {
