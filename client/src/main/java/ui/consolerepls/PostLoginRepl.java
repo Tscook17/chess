@@ -126,15 +126,15 @@ public class PostLoginRepl implements Runnable {
             gameNum = params[0];
             color = params[1].toUpperCase();
         }
-        int gameNumInt = Integer.parseInt(gameNum)-1;
-        if (gameNumInt < gameList.size() && gameNumInt >= 0) {
-            result = facade.joinGame(facade.getUserAuthToken(), color, gameList.get(gameNumInt));
+        int gameNumInt = Integer.parseInt(gameNum);
+        if (gameNumInt <= gameList.size() && gameNumInt > 0) {
+            result = facade.joinGame(facade.getUserAuthToken(), color, gameList.get(gameNumInt-1));
         } else {
             result = new JoinGameResult("Error: bad request", 400);
         }
         // more functionality added in phase 6
         if (result.getErrorCode() == 200) {
-            System.out.println("\nJoined game " + gameNum);
+            System.out.println("\nJoined game number " + gameNum);
             GameplayRepl repl =
                     new GameplayRepl(facade.getURL(), facade.getUserAuthToken(), gameNumInt, false);
             repl.run();
@@ -144,7 +144,6 @@ public class PostLoginRepl implements Runnable {
     }
 
     private void observe(String[] params) {
-        JoinGameResult result;
         String gameNum;
         if (params.length != 1) {
             Scanner scanner = new Scanner(System.in);
@@ -154,22 +153,15 @@ public class PostLoginRepl implements Runnable {
         } else {
             gameNum = params[0];
         }
-        int gameNumInt = Integer.parseInt(gameNum)-1;
-        if (gameNumInt < gameList.size() && gameNumInt >= 0) {
-            System.out.println(RESET_TEXT_COLOR + "Observing game number " + gameNum);
-            result = new JoinGameResult("", 200);
-
-        } else {
-            result = new JoinGameResult("Error: bad request", 400);
-        }
+        int gameNumInt = Integer.parseInt(gameNum);
         // observe functionality added in phase 6
-        if (result.getErrorCode() == 200) {
-            System.out.println("\nObserving game " + gameNum);
+        if (gameNumInt <= gameList.size() && gameNumInt > 0) {
+            System.out.println(RESET_TEXT_COLOR + "\nObserving game number " + gameNumInt);
             GameplayRepl repl =
                     new GameplayRepl(facade.getURL(), facade.getUserAuthToken(), gameNumInt, true);
             repl.run();
         } else {
-            System.out.println(SET_TEXT_COLOR_RED + "\n" + result.getMessage());
+            System.out.println(SET_TEXT_COLOR_RED + "\nError: bad request");
         }
     }
 }

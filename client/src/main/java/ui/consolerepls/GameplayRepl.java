@@ -85,9 +85,11 @@ public class GameplayRepl implements Runnable, GameHandler {
         } else {
             System.out.print(RESET_TEXT_COLOR + RESET_BG_COLOR + "\n" + message);
         }
+        // print cursor
+        System.out.print(RESET_TEXT_COLOR + RESET_BG_COLOR + "\n[IN_GAME] >>> " + SET_TEXT_COLOR_GREEN);
     }
 
-    private boolean leave() { return false; }
+    private boolean leave() { return true; }
 
     private void move(String[] params) {
 
