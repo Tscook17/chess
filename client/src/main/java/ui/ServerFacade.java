@@ -172,4 +172,8 @@ public class ServerFacade {
     public void setUserAuthToken(String userAuthToken) {
         this.userAuthToken = userAuthToken;
     }
+
+    public String getURL() {
+        return url;
+    }
 }

@@ -10,7 +10,6 @@ import java.util.Arrays;
 import java.util.Scanner;
 
 import static ui.EscapeSequences.*;
-import static ui.consolerepls.GameplayRepl.printBoard;
 
 public class PostLoginRepl implements Runnable {
     private final ServerFacade facade;
@@ -133,13 +132,12 @@ public class PostLoginRepl implements Runnable {
         } else {
             result = new JoinGameResult("Error: bad request", 400);
         }
-
-        // draw chess board in 2 orientations
-        printBoard(new ChessGame().getBoard(), true);
-        printBoard(new ChessGame().getBoard(), false);
         // more functionality added in phase 6
         if (result.getErrorCode() == 200) {
-            System.out.println("\nJoined game");
+            System.out.println("\nJoined game " + gameNum);
+            GameplayRepl repl =
+                    new GameplayRepl(facade.getURL(), facade.getUserAuthToken(), gameNumInt, false);
+            repl.run();
         } else {
             System.out.println(SET_TEXT_COLOR_RED + "\n" + result.getMessage());
         }
@@ -164,12 +162,12 @@ public class PostLoginRepl implements Runnable {
         } else {
             result = new JoinGameResult("Error: bad request", 400);
         }
-        // draw chess board in 2 orientations
-        printBoard(new ChessGame().getBoard(), true);
-        printBoard(new ChessGame().getBoard(), false);
         // observe functionality added in phase 6
         if (result.getErrorCode() == 200) {
-            System.out.println("\nObserving game");
+            System.out.println("\nObserving game " + gameNum);
+            GameplayRepl repl =
+                    new GameplayRepl(facade.getURL(), facade.getUserAuthToken(), gameNumInt, true);
+            repl.run();
         } else {
             System.out.println(SET_TEXT_COLOR_RED + "\n" + result.getMessage());
         }
