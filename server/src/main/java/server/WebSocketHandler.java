@@ -48,10 +48,10 @@ public class WebSocketHandler {
             // add connection
             sessions.addSessionToGame(message.getGameID(), session);
             // send load game message to client
-            LoadGameMessage loadGame = new LoadGameMessage(g.toJson(new GameDAO().getGame(message.getGameID())));
-            sessions.sendMessage(g.toJson(loadGame.getGame()), session);
-            // notification to all other people in game
             NotificationMessage notification = new NotificationMessage(checkPlayingGame(message));
+            LoadGameMessage loadGame = new LoadGameMessage(g.toJson(new GameDAO().getGame(message.getGameID())));
+            sessions.sendMessage(g.toJson(loadGame), session);
+            // notification to all other people in game
             sessions.broadcastMessage(message.getGameID(), g.toJson(notification), session);
         } catch(Exception e) {
             ErrorMessage error = new ErrorMessage(e.getMessage());

@@ -4,6 +4,7 @@ import org.eclipse.jetty.websocket.api.*;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Set;
 
 public class WebSocketSessions {
@@ -15,7 +16,7 @@ public class WebSocketSessions {
             sessions.add(session);
             sessionMap.put(gameID, sessions);
         } else {
-            throw new Exception("Error: this game does not exist");
+            sessionMap.put(gameID, new HashSet<>());
         }
 
     }
