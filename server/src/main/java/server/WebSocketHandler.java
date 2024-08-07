@@ -1,15 +1,15 @@
 package server;
 
+import com.google.gson.Gson;
+import dataaccess.sqldao.AuthDAO;
+import dataaccess.sqldao.GameDAO;
 import org.eclipse.jetty.websocket.api.*;
-import org.eclipse.jetty.websocket.api.annotations.OnWebSocketClose;
-import org.eclipse.jetty.websocket.api.annotations.OnWebSocketConnect;
-import org.eclipse.jetty.websocket.api.annotations.OnWebSocketError;
-import org.eclipse.jetty.websocket.api.annotations.OnWebSocketMessage;
-
-import static service.WebSocketService.*;
+import org.eclipse.jetty.websocket.api.annotations.*;
+import websocket.commands.*;
+import websocket.messages.*;
 
 public class WebSocketHandler {
-    private WebSocketSessions sessions;
+    private static WebSocketSessions sessions;
 
     @OnWebSocketConnect
     public void onConnection(Session session) {
@@ -27,21 +27,57 @@ public class WebSocketHandler {
     }
 
     @OnWebSocketMessage
-    public void onMessage(Session session, String str) {
+    public void onMessage(Session session, String str) throws Exception {
         // determine message type
-        String message = "";
+        Gson g = new Gson();
+        UserGameCommand command = g.fromJson(str, UserGameCommand.class);
+
         // call one of the following methods to process the message
-        connect(message); // call service and/or send messages to clients
-        makeMove(message); // service.method()
-        leaveGame(message); // sendMessage()
-        resignGame(message); // broadcastMessage()
+        switch (command.getCommandType()) {
+            case CONNECT -> connect(g.fromJson(str, ConnectCommand.class), session);
+            case MAKE_MOVE -> makeMove(g.fromJson(str, MakeMoveCommand.class));
+            case LEAVE -> leaveGame(g.fromJson(str, LeaveCommand.class));
+            case RESIGN -> resignGame(g.fromJson(str, ResignCommand.class));
+        }
     }
 
-    private void sendMessage(String message, Session session) {
+    private void connect(ConnectCommand message, Session session) throws Exception {
+        Gson g = new Gson();
+        try {
+            // add connection
+            sessions.addSessionToGame(message.getGameID(), session);
+            // send load game message to client
+            LoadGameMessage loadGame = new LoadGameMessage(g.toJson(new GameDAO().getGame(message.getGameID())));
+            sessions.sendMessage(g.toJson(loadGame.getGame()), session);
+            // notification to all other people in game
+            NotificationMessage notification = new NotificationMessage(checkPlayingGame(message));
+            sessions.broadcastMessage(message.getGameID(), g.toJson(notification), session);
+        } catch(Exception e) {
+            ErrorMessage error = new ErrorMessage(e.getMessage());
+            sessions.sendMessage(g.toJson(error), session);
+        }
+    }
+
+    private String checkPlayingGame(ConnectCommand message) throws Exception {
+        String username = new AuthDAO().getAuth(message.getAuthToken()).username();
+        if (username.equals(new GameDAO().getGame(message.getGameID()).whiteUsername())) {
+            return username + " has joined the game as White";
+        } else if (username.equals(new GameDAO().getGame(message.getGameID()).blackUsername())) {
+            return username + " has joined the game as Black";
+        } else {
+            return username + " has joined the game as an observer";
+        }
+    }
+
+    private void makeMove(MakeMoveCommand message) {
 
     }
 
-    private void broadcastMessage(int gameID, String message, Session exceptThisSession) {
+    private void leaveGame(LeaveCommand message) {
+
+    }
+
+    private void resignGame(ResignCommand message) {
 
     }
 }

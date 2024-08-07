@@ -41,6 +41,7 @@ public class Server {
         Spark.post("/game", APIHandler::handleCreateGame);
         Spark.put("/game", APIHandler::handleJoinGame);
         Spark.delete("/db", APIHandler::handleClear);
+        Spark.webSocket("/ws", WebSocketHandler.class);
         Spark.exception(Exception.class, APIHandler::errorHandler);
     }
 }
