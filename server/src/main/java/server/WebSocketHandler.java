@@ -42,8 +42,8 @@ public class WebSocketHandler {
         switch (command.getCommandType()) {
             case CONNECT -> connect(g.fromJson(str, ConnectCommand.class), session);
             case MAKE_MOVE -> makeMove(g.fromJson(str, MakeMoveCommand.class), session);
-            case LEAVE -> leaveGame(g.fromJson(str, LeaveCommand.class));
-            case RESIGN -> resignGame(g.fromJson(str, ResignCommand.class));
+            case LEAVE -> leaveGame(g.fromJson(str, LeaveCommand.class), session);
+            case RESIGN -> resignGame(g.fromJson(str, ResignCommand.class), session);
         }
     }
 
@@ -75,12 +75,16 @@ public class WebSocketHandler {
         }
     }
 
+    // todo fixme
     private void makeMove(MakeMoveCommand message, Session session) throws Exception {
         Gson g = new Gson();
         try {
             // check valid move
             if (!isValidMove(message)) {
                 throw new Exception("Error: invalid move");
+            }
+            if (new GameDAO().getGame(message.getGameID()).game().isGameOver()) {
+                throw new Exception("Game is over, can't make move");
             }
             // update game in database
             ChessGame game = new GameDAO().getGame(message.getGameID()).game();
@@ -123,13 +127,43 @@ public class WebSocketHandler {
         return validMoves.contains(message.getMove());
     }
 
-    private void leaveGame(LeaveCommand message) {
-        // if player leaving, remove player from game, update in database
-        // notify all other clients that players left
+    private void leaveGame(LeaveCommand message, Session session) throws Exception {
+        Gson g = new Gson();
+        try {
+            // if player leaving, remove player from game, update in database
+            String username = new AuthDAO().getAuth(message.getAuthToken()).username();
+            GameData gameData = new GameDAO().getGame(message.getGameID());
+            if (username.equals(gameData.whiteUsername())) {
+                new GameDAO().unjoinGame(message.getGameID(), "WHITE");
+                sessions.removeSessionFromGame(message.getGameID(), session);
+            } else if (username.equals(gameData.blackUsername())) {
+                new GameDAO().unjoinGame(message.getGameID(), "BLACK");
+                sessions.removeSessionFromGame(message.getGameID(), session);
+            }
+            // notify all other clients that players left
+            NotificationMessage notification =
+                    new NotificationMessage(new AuthDAO().getAuth(message.getAuthToken()).username() + " has left the game");
+            sessions.broadcastMessage(message.getGameID(), g.toJson(notification), session);
+        } catch(Exception e) {
+            ErrorMessage error = new ErrorMessage(e.getMessage());
+            sessions.sendMessage(g.toJson(error), session);
+        }
     }
 
-    private void resignGame(ResignCommand message) {
-        // mark game as over, update database
-        // notify all clients that he resigned
+    private void resignGame(ResignCommand message, Session session) throws Exception {
+        Gson g = new Gson();
+        try {
+            // mark game as over, update database
+            ChessGame game = new GameDAO().getGame(message.getGameID()).game();
+            game.setGameOver(true);
+            new GameDAO().updateGame(message.getGameID(), game);
+            // notify all clients that he resigned
+            NotificationMessage notification =
+                    new NotificationMessage(new AuthDAO().getAuth(message.getAuthToken()).username() + " has resigned");
+            sessions.broadcastMessage(message.getGameID(), g.toJson(notification), session);
+        } catch(Exception e) {
+            ErrorMessage error = new ErrorMessage(e.getMessage());
+            sessions.sendMessage(g.toJson(error), session);
+        }
     }
 }

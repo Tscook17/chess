@@ -16,7 +16,9 @@ public class WebSocketSessions {
             sessions.add(session);
             sessionMap.put(gameID, sessions);
         } else {
-            sessionMap.put(gameID, new HashSet<>());
+            Set<Session> newSet = new HashSet<>();
+            newSet.add(session);
+            sessionMap.put(gameID, newSet);
         }
 
     }

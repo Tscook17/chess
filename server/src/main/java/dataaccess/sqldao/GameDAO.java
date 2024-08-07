@@ -1,5 +1,7 @@
 package dataaccess.sqldao;
 
+import chess.ChessPiece;
+import chess.ChessPosition;
 import com.google.gson.Gson;
 import dataaccess.DataAccessException;
 import dataaccess.daointerfaces.GameDAOInterface;
@@ -86,6 +88,16 @@ public class GameDAO implements GameDAOInterface {
         } else {
             throw new DataAccessException("Error: already taken", 403);
         }
+    }
+
+    public void unjoinGame(int gameID, String playerColor) throws DataAccessException {
+        String statement;
+        if (playerColor.equalsIgnoreCase("WHITE")) {
+            statement = "UPDATE GameData SET whiteUsername=? WHERE gameID=?";
+        } else {
+            statement = "UPDATE GameData SET blackUsername=? WHERE gameID=?";
+        }
+        executeStatement(statement, new ChessPosition(0,0), gameID);
     }
 
     public void updateGame(int gameID, ChessGame game) throws DataAccessException {
