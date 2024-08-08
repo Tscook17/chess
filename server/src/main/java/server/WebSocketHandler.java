@@ -17,21 +17,6 @@ import java.util.Collection;
 public class WebSocketHandler {
     private static WebSocketSessions sessions = new WebSocketSessions();
 
-//    @OnWebSocketConnect
-//    public void onConnection(Session session) {
-//
-//    }
-//
-//    @OnWebSocketClose
-//    public void onClose(Session session) {
-//
-//    }
-//
-//    @OnWebSocketError
-//    public void onError(Throwable throwable) {
-//
-//    }
-
     @OnWebSocketMessage
     public void onMessage(Session session, String str) throws Exception {
         // determine message type
@@ -47,9 +32,24 @@ public class WebSocketHandler {
         }
     }
 
+    private void verifyCommand(UserGameCommand command, ChessMove move) throws Exception {
+        if (command.getAuthToken() != null &&
+            command.getGameID() != null &&
+            command.getGameID() != 0) {
+            new AuthDAO().getAuth(command.getAuthToken());
+            if (command.getCommandType() == UserGameCommand.CommandType.MAKE_MOVE &&
+                move == null) {
+                throw new Exception("Error: invalid request");
+            }
+        } else {
+            throw new Exception("Error: invalid request");
+        }
+    }
+
     private void connect(ConnectCommand message, Session session) throws Exception {
         Gson g = new Gson();
         try {
+            verifyCommand(message, null);
             // add connection
             sessions.addSessionToGame(message.getGameID(), session);
             // send load game message to client
@@ -79,12 +79,13 @@ public class WebSocketHandler {
     private void makeMove(MakeMoveCommand message, Session session) throws Exception {
         Gson g = new Gson();
         try {
+            verifyCommand(message, message.getMove());
             // check valid move
             if (!isValidMove(message)) {
                 throw new Exception("Error: invalid move");
             }
             if (new GameDAO().getGame(message.getGameID()).game().isGameOver()) {
-                throw new Exception("Game is over, can't make move");
+                throw new Exception("Error: Game is over, can't make move");
             }
             // update game in database
             ChessGame game = new GameDAO().getGame(message.getGameID()).game();
@@ -130,6 +131,7 @@ public class WebSocketHandler {
     private void leaveGame(LeaveCommand message, Session session) throws Exception {
         Gson g = new Gson();
         try {
+            verifyCommand(message, null);
             // if player leaving, remove player from game, update in database
             String username = new AuthDAO().getAuth(message.getAuthToken()).username();
             GameData gameData = new GameDAO().getGame(message.getGameID());
@@ -153,6 +155,7 @@ public class WebSocketHandler {
     private void resignGame(ResignCommand message, Session session) throws Exception {
         Gson g = new Gson();
         try {
+            verifyCommand(message, null);
             // mark game as over, update database
             ChessGame game = new GameDAO().getGame(message.getGameID()).game();
             game.setGameOver(true);

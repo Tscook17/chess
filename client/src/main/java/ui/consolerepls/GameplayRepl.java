@@ -140,11 +140,11 @@ public class GameplayRepl implements Runnable, GameHandler {
             start = params[0];
             finish = params[1];
         }
-        letterStart = start.charAt(0);
-        numStart = Integer.parseInt(start.charAt(0) + "");
-        letterFinish = finish.charAt(0);
-        numFinish = Integer.parseInt(finish.charAt(0) + "");
         try {
+            letterStart = start.charAt(0);
+            numStart = Integer.parseInt(start.charAt(1) + "");
+            letterFinish = finish.charAt(0);
+            numFinish = Integer.parseInt(finish.charAt(1) + "");
             if (letterStart <= 'h' && letterStart >= 'a' &&
                     numStart <= 8 && numStart >= 1 &&
                     letterFinish <= 'h' && letterFinish >= 'a' &&
@@ -160,7 +160,6 @@ public class GameplayRepl implements Runnable, GameHandler {
         }
     }
 
-    // todo: match move
     private void highlight(String[] params) {
         char letterStart;
         int numStart;
@@ -174,12 +173,11 @@ public class GameplayRepl implements Runnable, GameHandler {
             position = params[0];
         }
         letterStart = position.charAt(0);
-        numStart = Integer.parseInt(position.charAt(0) + "");
+        numStart = Integer.parseInt(position.charAt(1) + "");
         if (letterStart <= 'h' && letterStart >= 'a' &&
                 numStart <= 8 && numStart >= 1) {
             ChessPosition startPosition = new ChessPosition(numStart, coordinateMap.get(letterStart));
-            printBoard(localGame.getBoard(),
-                    (localGame.getBoard().getPiece(startPosition).getTeamColor() == ChessGame.TeamColor.WHITE), startPosition);
+            printBoard(localGame.getBoard(), isWhite, startPosition);
         } else {
             System.out.println(SET_TEXT_COLOR_RED + "\nError: bad request");
         }
@@ -230,7 +228,7 @@ public class GameplayRepl implements Runnable, GameHandler {
         for (int i = 8; i > 0; i--) {
             boolean isLight = (i % 2 == 0);
             for (int j = 0; j < 10; j++) {
-                if (checkIfValid(validMoves, i, j)) {
+                if (checkIfValid(validMoves, i, j) || start.equals(new ChessPosition(i, j))) {
                     isLight = printPiece(i, j, colNum, isLight, true);
                 } else {
                     isLight = printPiece(i, j, colNum, isLight, false);
@@ -247,7 +245,7 @@ public class GameplayRepl implements Runnable, GameHandler {
         for (int i = 1; i < 9; i++) {
             boolean isLight = (i % 2 == 1);
             for (int j = 9; j >= 0; j--) {
-                if (checkIfValid(validMoves, i, j)) {
+                if (checkIfValid(validMoves, i, j) || start.equals(new ChessPosition(i, j))) {
                     isLight = printPiece(i, j, colNum, isLight, true);
                 } else {
                     isLight = printPiece(i, j, colNum, isLight, false);
