@@ -94,7 +94,6 @@ public class WebSocketHandler {
         }
     }
 
-    // fixme and others below
     private void makeMove(MakeMoveCommand message, Session session) throws Exception {
         Gson g = new Gson();
         try {

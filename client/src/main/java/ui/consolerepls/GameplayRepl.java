@@ -234,11 +234,7 @@ public class GameplayRepl implements Runnable, GameHandler {
         for (int i = 8; i > 0; i--) {
             boolean isLight = (i % 2 == 0);
             for (int j = 0; j < 10; j++) {
-                if (checkIfValid(validMoves, i, j) || start.equals(new ChessPosition(i, j))) {
-                    isLight = printPiece(i, j, colNum, isLight, true);
-                } else {
-                    isLight = printPiece(i, j, colNum, isLight, false);
-                }
+                isLight = printPiece(i, j, colNum, isLight, checkIfValid(validMoves, i, j) || start.equals(new ChessPosition(i, j)));
             }
             System.out.print(RESET_BG_COLOR + "\n");
             colNum--;
@@ -251,11 +247,7 @@ public class GameplayRepl implements Runnable, GameHandler {
         for (int i = 1; i < 9; i++) {
             boolean isLight = (i % 2 == 1);
             for (int j = 9; j >= 0; j--) {
-                if (checkIfValid(validMoves, i, j) || start.equals(new ChessPosition(i, j))) {
-                    isLight = printPiece(i, j, colNum, isLight, true);
-                } else {
-                    isLight = printPiece(i, j, colNum, isLight, false);
-                }
+                isLight = printPiece(i, j, colNum, isLight, checkIfValid(validMoves, i, j) || start.equals(new ChessPosition(i, j)));
             }
             System.out.print(RESET_BG_COLOR + "\n");
             colNum++;
