@@ -1,5 +1,6 @@
 package ui;
 
+import chess.ChessMove;
 import com.google.gson.Gson;
 import servicepackets.request.RegisterRequest;
 import servicepackets.result.RegisterResult;
@@ -37,16 +38,24 @@ public class WebSocketFacade extends Endpoint implements MessageHandler.Whole<St
         sendMessage(command);
     }
 
-    public void makeMove() {
-
+    public void makeMove(String authToken, int gameID, ChessMove move) throws Exception {
+        MakeMoveCommand command = new MakeMoveCommand(authToken, gameID, move);
+        sendMessage(command);
     }
 
-    public void leaveGame() {
-
+    public boolean leaveGame(String authToken, int gameID) {
+        try {
+            LeaveCommand command = new LeaveCommand(authToken, gameID);
+            sendMessage(command);
+            return true;
+        } catch(Exception e) {
+            return false;
+        }
     }
 
-    public void resignGame() {
-
+    public void resignGame(String authToken, int gameID) throws Exception {
+        ResignCommand command = new ResignCommand(authToken, gameID);
+        sendMessage(command);
     }
 
     private <T extends UserGameCommand> void sendMessage(T command) throws Exception {

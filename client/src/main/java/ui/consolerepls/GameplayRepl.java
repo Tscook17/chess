@@ -1,9 +1,6 @@
 package ui.consolerepls;
 
-import chess.ChessBoard;
-import chess.ChessGame;
-import chess.ChessPiece;
-import chess.ChessPosition;
+import chess.*;
 import com.google.gson.Gson;
 import ui.WebSocketFacade;
 import websocket.messages.LoadGameMessage;
@@ -22,6 +19,17 @@ public class GameplayRepl implements Runnable, GameHandler {
             ChessPiece.PieceType.BISHOP, "B",
             ChessPiece.PieceType.ROOK, "R",
             ChessPiece.PieceType.PAWN, "P"
+    );
+
+    private final Map<Character, Integer> coordinateMap = Map.of(
+            'a', 1,
+            'b', 2,
+            'c', 3,
+            'd', 4,
+            'e', 5,
+            'f', 6,
+            'g', 7,
+            'h', 8
     );
 
     private WebSocketFacade wsFacade;
@@ -89,14 +97,57 @@ public class GameplayRepl implements Runnable, GameHandler {
         System.out.print(RESET_TEXT_COLOR + RESET_BG_COLOR + "\n[IN_GAME] >>> " + SET_TEXT_COLOR_GREEN);
     }
 
-    private boolean leave() { return true; }
-
-    private void move(String[] params) {
-
+    private boolean leave() {
+        boolean result = wsFacade.leaveGame(authToken, gameID);
+        if (!result) {
+            System.out.println(SET_TEXT_COLOR_RED + RESET_BG_COLOR + "\nError: failed to leave");
+        }
+        return result;
     }
 
     private void resign() {
+        try {
+            wsFacade.resignGame(authToken, gameID);
+        } catch (Exception e) {
+            System.out.println(SET_TEXT_COLOR_RED + RESET_BG_COLOR + "\nError: failed to resign");
+        }
+    }
 
+    // todo: add pawn promotion, add bad input
+    private void move(String[] params) {
+        if (isObserver) {
+            System.out.println(SET_TEXT_COLOR_RED + RESET_BG_COLOR + "\nError: observer cannot make move");
+            return;
+        }
+        char letterStart;
+        int numStart;
+        char letterFinish;
+        int numFinish;
+        String start;
+        String finish;
+        if (params.length != 2) {
+            Scanner scanner = new Scanner(System.in);
+            // ask for start
+            System.out.print(RESET_TEXT_COLOR + "\nStart position: ");
+            start = scanner.nextLine();
+            // ask for finish
+            System.out.print(RESET_TEXT_COLOR + "\nFinish position: ");
+            finish = scanner.nextLine();
+        } else {
+            start = params[0];
+            finish = params[1];
+        }
+        letterStart = start.charAt(0);
+        numStart = Integer.parseInt(start.charAt(0) + "");
+        letterFinish = finish.charAt(0);
+        numFinish = Integer.parseInt(finish.charAt(0) + "");
+        if (Character.isLetter(letterStart) && Character.isLetter(letterFinish)) {
+            ChessPosition startPosition = new ChessPosition(numStart, coordinateMap.get(letterStart));
+            ChessPosition finalPosition = new ChessPosition(numFinish, coordinateMap.get(letterFinish));
+            wsFacade.makeMove(authToken, gameID, new ChessMove(startPosition, finalPosition, null));
+        } else {
+            System.out.println(SET_TEXT_COLOR_RED + "\nError: bad request");
+        }
     }
 
     private void highlight(String[] params) {
@@ -113,7 +164,7 @@ public class GameplayRepl implements Runnable, GameHandler {
         }
         System.out.println(SET_TEXT_COLOR_BLUE + """
                 \nredraw - redraws the chess board
-                move <letter#> - make a move
+                move <letter#> <letter#> - make a move, list start then final position
                 highlight <letter#> - highlights all legal moves for the given space
                 leave - leave the game
                 resign - forfeit the game
