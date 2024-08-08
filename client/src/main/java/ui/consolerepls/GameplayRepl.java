@@ -6,6 +6,7 @@ import ui.WebSocketFacade;
 import websocket.messages.LoadGameMessage;
 
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Map;
 import java.util.Scanner;
 
@@ -36,11 +37,13 @@ public class GameplayRepl implements Runnable, GameHandler {
     private String authToken;
     private Integer gameID;
     private ChessGame localGame;
+    private boolean isWhite;
     private boolean isObserver;
 
-    public GameplayRepl(String url, String authToken, int gameID, boolean isObserver) {
+    public GameplayRepl(String url, String authToken, int gameID, boolean isWhite, boolean isObserver) {
         this.authToken = authToken;
         this.gameID = gameID;
+        this.isWhite = isWhite;
         this.isObserver = isObserver;
         try {
             wsFacade = new WebSocketFacade(url, this);
@@ -113,7 +116,7 @@ public class GameplayRepl implements Runnable, GameHandler {
         }
     }
 
-    // todo: add pawn promotion, add bad input
+    // todo: add pawn promotion
     private void move(String[] params) {
         if (isObserver) {
             System.out.println(SET_TEXT_COLOR_RED + RESET_BG_COLOR + "\nError: observer cannot make move");
@@ -141,21 +144,49 @@ public class GameplayRepl implements Runnable, GameHandler {
         numStart = Integer.parseInt(start.charAt(0) + "");
         letterFinish = finish.charAt(0);
         numFinish = Integer.parseInt(finish.charAt(0) + "");
-        if (Character.isLetter(letterStart) && Character.isLetter(letterFinish)) {
+        try {
+            if (letterStart <= 'h' && letterStart >= 'a' &&
+                    numStart <= 8 && numStart >= 1 &&
+                    letterFinish <= 'h' && letterFinish >= 'a' &&
+                    numFinish <= 8 && numFinish >= 1) {
+                ChessPosition startPosition = new ChessPosition(numStart, coordinateMap.get(letterStart));
+                ChessPosition finalPosition = new ChessPosition(numFinish, coordinateMap.get(letterFinish));
+                wsFacade.makeMove(authToken, gameID, new ChessMove(startPosition, finalPosition, null));
+            } else {
+                System.out.println(SET_TEXT_COLOR_RED + "\nError: bad request");
+            }
+        } catch(Exception e) {
+            System.out.println(SET_TEXT_COLOR_RED + "\nError: unable to move");
+        }
+    }
+
+    // todo: match move
+    private void highlight(String[] params) {
+        char letterStart;
+        int numStart;
+        String position;
+        if (params.length != 1) {
+            Scanner scanner = new Scanner(System.in);
+            // ask for game number
+            System.out.print(RESET_TEXT_COLOR + "\nPiece position: ");
+            position = scanner.nextLine();
+        } else {
+            position = params[0];
+        }
+        letterStart = position.charAt(0);
+        numStart = Integer.parseInt(position.charAt(0) + "");
+        if (letterStart <= 'h' && letterStart >= 'a' &&
+                numStart <= 8 && numStart >= 1) {
             ChessPosition startPosition = new ChessPosition(numStart, coordinateMap.get(letterStart));
-            ChessPosition finalPosition = new ChessPosition(numFinish, coordinateMap.get(letterFinish));
-            wsFacade.makeMove(authToken, gameID, new ChessMove(startPosition, finalPosition, null));
+            printBoard(localGame.getBoard(),
+                    (localGame.getBoard().getPiece(startPosition).getTeamColor() == ChessGame.TeamColor.WHITE), startPosition);
         } else {
             System.out.println(SET_TEXT_COLOR_RED + "\nError: bad request");
         }
     }
 
-    private void highlight(String[] params) {
-
-    }
-
     private void redraw() {
-
+        printBoard(localGame.getBoard(), isWhite, null);
     }
 
     private void printHelp(boolean isBadCommand) {
@@ -172,50 +203,105 @@ public class GameplayRepl implements Runnable, GameHandler {
                 """);
     }
 
-    private void printBoard(chess.ChessBoard board, boolean isWhite) {
+    private void printBoard(chess.ChessBoard board, boolean isWhite, ChessPosition start) {
         if (isWhite) {
             printLetters(false);
-            printWhiteBoard(board);
+            if (start != null) {
+                printHighlightsWhite(start);
+            } else {
+                printWhiteBoard();
+            }
             printLetters(false);
         } else {
             printLetters(true);
-            printBlackBoard(board);
+            if (start != null) {
+                printHighlightsBlack(start);
+            } else {
+                printBlackBoard();
+            }
             printLetters(true);
         }
-        System.out.println(RESET_TEXT_COLOR + RESET_BG_COLOR);
+        System.out.println(RESET_TEXT_COLOR + RESET_BG_COLOR + "\n");
     }
 
-    private void printWhiteBoard(ChessBoard board) {
+    private void printHighlightsWhite(ChessPosition start) {
         int colNum = 8;
+        Collection<ChessMove> validMoves = localGame.validMoves(start);
         for (int i = 8; i > 0; i--) {
             boolean isLight = (i % 2 == 0);
             for (int j = 0; j < 10; j++) {
-                isLight = printPiece(i, j, colNum, isLight, board);
+                if (checkIfValid(validMoves, i, j)) {
+                    isLight = printPiece(i, j, colNum, isLight, true);
+                } else {
+                    isLight = printPiece(i, j, colNum, isLight, false);
+                }
             }
             System.out.print(RESET_BG_COLOR + "\n");
             colNum--;
         }
     }
 
-    private void printBlackBoard(ChessBoard board) {
+    private void printHighlightsBlack(ChessPosition start) {
         int colNum = 1;
+        Collection<ChessMove> validMoves = localGame.validMoves(start);
         for (int i = 1; i < 9; i++) {
             boolean isLight = (i % 2 == 1);
             for (int j = 9; j >= 0; j--) {
-                isLight = printPiece(i, j, colNum, isLight, board);
+                if (checkIfValid(validMoves, i, j)) {
+                    isLight = printPiece(i, j, colNum, isLight, true);
+                } else {
+                    isLight = printPiece(i, j, colNum, isLight, false);
+                }
             }
             System.out.print(RESET_BG_COLOR + "\n");
             colNum++;
         }
     }
 
-    private boolean printPiece(int row, int col, int colNum, boolean isLight, ChessBoard board) {
+    private boolean checkIfValid(Collection<ChessMove> validMoves, int i, int j) {
+        for (var move : validMoves) {
+            if (move.getEndPosition().equals(new ChessPosition(i,j))) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private void printWhiteBoard() {
+        int colNum = 8;
+        for (int i = 8; i > 0; i--) {
+            boolean isLight = (i % 2 == 0);
+            for (int j = 0; j < 10; j++) {
+                isLight = printPiece(i, j, colNum, isLight, false);
+            }
+            System.out.print(RESET_BG_COLOR + "\n");
+            colNum--;
+        }
+    }
+
+    private void printBlackBoard() {
+        int colNum = 1;
+        for (int i = 1; i < 9; i++) {
+            boolean isLight = (i % 2 == 1);
+            for (int j = 9; j >= 0; j--) {
+                isLight = printPiece(i, j, colNum, isLight, false);
+            }
+            System.out.print(RESET_BG_COLOR + "\n");
+            colNum++;
+        }
+    }
+
+    private boolean printPiece(int row, int col, int colNum, boolean isLight, boolean isHighlight) {
         if (col == 0 || col == 9) {
             System.out.print(SET_BG_COLOR_LIGHT_GREY + SET_TEXT_COLOR_BLACK + " " + colNum + " ");
             return isLight;
         } else {
-            System.out.print((isLight ? SET_BG_COLOR_WHITE : SET_BG_COLOR_BLACK));
-            ChessPiece piece = board.getPiece(new ChessPosition(row,col));
+            if (isHighlight) {
+                System.out.print((isLight ? SET_BG_COLOR_GREEN : SET_BG_COLOR_DARK_GREEN));
+            } else {
+                System.out.print((isLight ? SET_BG_COLOR_WHITE : SET_BG_COLOR_BLACK));
+            }
+            ChessPiece piece = localGame.getBoard().getPiece(new ChessPosition(row,col));
             if (piece == null) {
                 System.out.print("   ");
             } else {

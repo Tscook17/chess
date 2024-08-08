@@ -136,7 +136,7 @@ public class PostLoginRepl implements Runnable {
         if (result.getErrorCode() == 200) {
             System.out.println("\nJoined game number " + gameNum);
             GameplayRepl repl =
-                    new GameplayRepl(facade.getURL(), facade.getUserAuthToken(), gameNumInt, false);
+                    new GameplayRepl(facade.getURL(), facade.getUserAuthToken(), gameNumInt, color.equals("white"), false);
             repl.run();
         } else {
             System.out.println(SET_TEXT_COLOR_RED + "\n" + result.getMessage());
@@ -158,7 +158,7 @@ public class PostLoginRepl implements Runnable {
         if (gameNumInt <= gameList.size() && gameNumInt > 0) {
             System.out.println(RESET_TEXT_COLOR + "\nObserving game number " + gameNumInt);
             GameplayRepl repl =
-                    new GameplayRepl(facade.getURL(), facade.getUserAuthToken(), gameNumInt, true);
+                    new GameplayRepl(facade.getURL(), facade.getUserAuthToken(), gameNumInt, true, true);
             repl.run();
         } else {
             System.out.println(SET_TEXT_COLOR_RED + "\nError: bad request");
