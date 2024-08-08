@@ -31,6 +31,11 @@ public class WebSocketHandler {
             8, 'h'
     );
 
+    @OnWebSocketError
+    public void onError(Throwable throwable) {
+        System.out.print(throwable.getMessage());
+    }
+
     @OnWebSocketMessage
     public void onMessage(Session session, String str) throws Exception {
         // determine message type
@@ -94,13 +99,17 @@ public class WebSocketHandler {
         Gson g = new Gson();
         try {
             verifyCommand(message, message.getMove());
-            // check valid move
-            if (!isValidMove(message)) {
-                throw new Exception("Error: invalid move");
+            if (new GameDAO().getGame(message.getGameID()).whiteUsername() == null ||
+                new GameDAO().getGame(message.getGameID()).whiteUsername() == null) {
+                throw new Exception("Error: waiting for opponent to join game");
             }
             checkIfObserver(message);
             if (new GameDAO().getGame(message.getGameID()).game().isGameOver()) {
                 throw new Exception("Error: Game is over, can't make move");
+            }
+            // check valid move
+            if (!isValidMove(message)) {
+                throw new Exception("Error: invalid move");
             }
             checkYourTurn(message);
             checkIfYourPiece(message);
@@ -109,7 +118,7 @@ public class WebSocketHandler {
             game.makeMove(message.getMove());
             new GameDAO().updateGame(message.getGameID(), game);
             // send load game to all clients in game w/ updated game
-            LoadGameMessage loadGame = new LoadGameMessage(g.toJson(new GameDAO().getGame(message.getGameID())));
+            LoadGameMessage loadGame = new LoadGameMessage(g.toJson(game));
             sessions.broadcastMessage(message.getGameID(), g.toJson(loadGame), null);
             // notify all other clients that move made not mover
             String move =
@@ -156,32 +165,34 @@ public class WebSocketHandler {
         }
     }
 
-    private void notifyGameState(GameData game, MakeMoveCommand message, Session session) throws Exception {
+    private void notifyGameState(GameData gameData, MakeMoveCommand message, Session session) throws Exception {
         Gson g = new Gson();
+        ChessGame game = gameData.game();
+        String username = game.getTeamTurn() == ChessGame.TeamColor.WHITE ? gameData.whiteUsername() : gameData.blackUsername();
         String statement = null;
-        if (game.game().isInCheck(ChessGame.TeamColor.WHITE)) {
-            statement = game.whiteUsername() + " is in check!";
-        } else if (game.game().isInCheckmate(ChessGame.TeamColor.WHITE)) {
-            statement = game.whiteUsername() + " is in checkmate!";
-        } else if (game.game().isInStalemate(ChessGame.TeamColor.WHITE)) {
-            statement = game.whiteUsername() + " is in stalemate!";
-        }
-        if (game.game().isInCheck(ChessGame.TeamColor.BLACK)) {
-            statement = game.blackUsername() + " is in check!";
-        } else if (game.game().isInCheckmate(ChessGame.TeamColor.BLACK)) {
-            statement = game.blackUsername() + " is in checkmate!";
-        } else if (game.game().isInStalemate(ChessGame.TeamColor.BLACK)) {
-            statement = game.blackUsername() + " is in stalemate!";
+        if (gameData.game().isInCheck(game.getTeamTurn())) {
+            statement = username + " is in check!";
+        } else if (gameData.game().isInCheckmate(game.getTeamTurn())) {
+            statement = username + " is in checkmate!";
+            game.setGameOver(true);
+            new GameDAO().updateGame(message.getGameID(), game);
+        } else if (gameData.game().isInStalemate(game.getTeamTurn())) {
+            statement = username + " is in stalemate!";
+            game.setGameOver(true);
+            new GameDAO().updateGame(message.getGameID(), game);
         }
         if (statement != null) {
             NotificationMessage notification = new NotificationMessage(statement);
-            sessions.broadcastMessage(message.getGameID(), g.toJson(notification), session);
+            sessions.broadcastMessage(message.getGameID(), g.toJson(notification), null);
         }
     }
 
     private boolean isValidMove(MakeMoveCommand message) throws Exception {
         ChessGame game = new GameDAO().getGame(message.getGameID()).game();
         Collection<ChessMove> validMoves = game.validMoves(message.getMove().getStartPosition());
+        if (validMoves == null) {
+            throw new Exception("Error: no piece selected");
+        }
         return validMoves.contains(message.getMove());
     }
 
@@ -214,6 +225,10 @@ public class WebSocketHandler {
         try {
             verifyCommand(message, null);
             checkIfObserver(message);
+            // check if game already over
+            if (new GameDAO().getGame(message.getGameID()).game().isGameOver()) {
+                throw new Exception("Error: Game is over, can't make move");
+            }
             // mark game as over, update database
             ChessGame game = new GameDAO().getGame(message.getGameID()).game();
             game.setGameOver(true);
@@ -221,7 +236,7 @@ public class WebSocketHandler {
             // notify all clients that he resigned
             NotificationMessage notification =
                     new NotificationMessage(new AuthDAO().getAuth(message.getAuthToken()).username() + " has resigned");
-            sessions.broadcastMessage(message.getGameID(), g.toJson(notification), session);
+            sessions.broadcastMessage(message.getGameID(), g.toJson(notification), null);
         } catch(Exception e) {
             ErrorMessage error = new ErrorMessage(e.getMessage());
             sessions.sendMessage(g.toJson(error), session);

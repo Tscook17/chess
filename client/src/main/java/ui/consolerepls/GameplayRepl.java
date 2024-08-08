@@ -38,13 +38,11 @@ public class GameplayRepl implements Runnable, GameHandler {
     private Integer gameID;
     private ChessGame localGame;
     private boolean isWhite;
-    private boolean isObserver;
 
-    public GameplayRepl(String url, String authToken, int gameID, boolean isWhite, boolean isObserver) {
+    public GameplayRepl(String url, String authToken, int gameID, boolean isWhite) {
         this.authToken = authToken;
         this.gameID = gameID;
         this.isWhite = isWhite;
-        this.isObserver = isObserver;
         try {
             wsFacade = new WebSocketFacade(url, this);
             wsFacade.connect(authToken, gameID);
@@ -87,6 +85,8 @@ public class GameplayRepl implements Runnable, GameHandler {
     public void updateGame(LoadGameMessage message) {
         localGame = new Gson().fromJson(message.getGame(), ChessGame.class);
         redraw();
+        // print cursor
+        System.out.print(RESET_TEXT_COLOR + RESET_BG_COLOR + "[IN_GAME] >>> " + SET_TEXT_COLOR_GREEN);
     }
 
     @Override
@@ -102,18 +102,26 @@ public class GameplayRepl implements Runnable, GameHandler {
     }
 
     private boolean leave() {
-        boolean result = wsFacade.leaveGame(authToken, gameID);
-        if (!result) {
-            System.out.println(SET_TEXT_COLOR_RED + RESET_BG_COLOR + "\nError: failed to leave");
+        try {
+            wsFacade.leaveGame(authToken, gameID);
+            return true;
+        } catch (Exception e) {
+            System.out.println(SET_TEXT_COLOR_RED + RESET_BG_COLOR + "\nError: failed to leave, " + e.getMessage());
         }
-        return result;
+        return false;
     }
 
     private void resign() {
         try {
+            System.out.print(RESET_TEXT_COLOR + "Are you sure you want to resign? (yes/no)\n");
+            Scanner scanner = new Scanner(System.in);
+            String input = scanner.nextLine().toLowerCase();
+            if (!input.equals("yes")) {
+                return;
+            }
             wsFacade.resignGame(authToken, gameID);
         } catch (Exception e) {
-            System.out.println(SET_TEXT_COLOR_RED + RESET_BG_COLOR + "\nError: failed to resign");
+            System.out.println(SET_TEXT_COLOR_RED + RESET_BG_COLOR + "\nError: failed to resign, " + e.getMessage());
         }
     }
 
@@ -153,7 +161,7 @@ public class GameplayRepl implements Runnable, GameHandler {
                 System.out.println(SET_TEXT_COLOR_RED + "\nError: bad request");
             }
         } catch(Exception e) {
-            System.out.println(SET_TEXT_COLOR_RED + "\nError: unable to move");
+            System.out.println(SET_TEXT_COLOR_RED + "\nError: unable to move, " + e.getMessage());
         }
     }
 
@@ -199,6 +207,7 @@ public class GameplayRepl implements Runnable, GameHandler {
     }
 
     private void printBoard(chess.ChessBoard board, boolean isWhite, ChessPosition start) {
+        System.out.println(RESET_TEXT_COLOR + RESET_BG_COLOR + "\n");
         if (isWhite) {
             printLetters(false);
             if (start != null) {

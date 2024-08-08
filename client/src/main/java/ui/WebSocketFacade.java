@@ -43,14 +43,9 @@ public class WebSocketFacade extends Endpoint implements MessageHandler.Whole<St
         sendMessage(command);
     }
 
-    public boolean leaveGame(String authToken, int gameID) {
-        try {
-            LeaveCommand command = new LeaveCommand(authToken, gameID);
-            sendMessage(command);
-            return true;
-        } catch(Exception e) {
-            return false;
-        }
+    public void leaveGame(String authToken, int gameID) throws Exception {
+        LeaveCommand command = new LeaveCommand(authToken, gameID);
+        sendMessage(command);
     }
 
     public void resignGame(String authToken, int gameID) throws Exception {
