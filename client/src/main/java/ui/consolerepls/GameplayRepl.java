@@ -86,6 +86,7 @@ public class GameplayRepl implements Runnable, GameHandler {
     @Override
     public void updateGame(LoadGameMessage message) {
         localGame = new Gson().fromJson(message.getGame(), ChessGame.class);
+        redraw();
     }
 
     @Override
@@ -118,10 +119,6 @@ public class GameplayRepl implements Runnable, GameHandler {
 
     // todo: add pawn promotion
     private void move(String[] params) {
-        if (isObserver) {
-            System.out.println(SET_TEXT_COLOR_RED + RESET_BG_COLOR + "\nError: observer cannot make move");
-            return;
-        }
         char letterStart;
         int numStart;
         char letterFinish;
